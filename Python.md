@@ -1,4 +1,4 @@
-#### @ Everything about <u>underline</u>
+## @ Everything about <u>underline</u>
 
 - `_entity` 是伪 private 变量/方法，一种约定
 	- [x] 直接通过 `instance._entity` 访问
@@ -20,10 +20,10 @@
 	> 每个Python模块（Python文件）都有内置变量`__name__`，当模块 my_module.py 被执行的时候，`__name__`等于 'my_module.py' （包含后缀.py）。如果import到其他模块中，则`__name__`等于 'my_module'（不包含后缀.py）。而'\_\_main__'等于当前执行文件的名称（包含后缀.py）。
 
 ---
-#### @ pip install -e/--editable .
+## @ pip install -e/--editable .
 此命令关联一个特殊文件叫做 `setup.py` ，本质是在当前文件夹下寻找并且执行文件 `setup.py` ，并且以 develop mode 启动项目。在此模式下，对于当前 venv 下安装的全部 module 都可以直接通过编辑来修改源代码（包括 numpy 之类的标准库），同 venv 下的其他 proj 会共享这个修改版的 module。更适合自由开发但同时也更危险。
 
-#### @ Import self-defined  module
+## @ Import self-defined  module
 
 假设现在有如下的文件结构
 ```
@@ -64,7 +64,7 @@
 	```
 	作为包的作者，可别忘了在更新包之后保证  `__all__`  也更新了啊
 
-#### @ python 格式化输入输出
+## @ python 格式化输入输出
 ``` python
 x = 'name: %s; score: %d' % (name, n)
 x = 'name: {}; score: {}'.format(name, n)
@@ -72,7 +72,7 @@ x = f'name: {name}; score: {n}'
 ```
 
 ---
-#### @ Script header
+## @ Script header
 
 - Linux 中写 Python script 和 Shell script 之前, 最好在文件开头指明 interpreter. 
 	
@@ -95,14 +95,14 @@ x = f'name: {name}; score: {n}'
 	```
 
 ---
-#### @ Python install requirement.txt
+## @ Python install requirement.txt
 Please refer to [here](https://note.nkmk.me/en/python-pip-install-requirements/, "about how to make requirements.txt file") on simple syntax for writing your own requirements.txt file.
 
 ---
-#### @ Switch Python3 version
+## @ Switch Python3 version
 
 ``` shell
-$ update-alternatives --set python3
+$ update-alternatives --config python
 > There are 2 choices for the alternative python3 (providing /usr/bin/python3).
 
   Selection    Path                Priority   Status
@@ -115,7 +115,7 @@ Press <enter> to keep the current choice[*], or type selection number:
 ```
 
 ---
-#### @ python<xxx> -m pip install
+## @ python<xxx> -m pip install
 
 为了避免 pip3 和 pip 只能针对当前 python3 和 python 指向的 interpreter, 可以使用如下命令指定 python 版本
 ```shell
@@ -124,14 +124,34 @@ python<x.x> -m pip <cmd> <option>
 可以轻松为 python3.6 和 python3.7 安装不同的 pkg
 
 ---
-#### @ 
+## @ with...as... 的本质
 
+1. 本质是一种上下文管理器，其修饰的类型必须包含两种 magic method `__enter__()` 和 `__exit__()`
+2. 先执行 `__enter()__`，拿到其返回值作为 `as` 的值
+3. 再执行 `with` 后的操作
+4. 最后执行 `__exit__()`
+5. `__exit__()` 可以捕捉异常信息，根据错误类型进行异常处理
+
+```python
+class classAfterWith():
+	def __enter__(self):
+		print(f"Enter class withas...")
+		return self
+	def __exit(self, value, type, trace):
+		print(f"value={value}")
+		print(f"type={type}")
+		print(f"trace={trace}")
+		return True
+```
+
+
+---
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTk2NjExOTgzMCwtMTYzNjg0OTc5OCwtMT
-Q3MDI5OTM1NSwtMTIxMjU1MzIyMSwtMTE3NjQwMjUzLDExODgx
-OTA1OTgsMTcyODQ4NDYyMCwtMTExNjUzNTQ2OSwtMTc4Mzg0OD
-YwNywzOTczNTIyODUsLTE0MTM5MDIxMzQsLTE5NDQ1Mzg5Mywt
-MjAzNTM1NzMzNywtMTI4MTc1MzA3MywxNjgyMTg5MzgsLTE3MD
-Q2MzkzODQsLTE5ODUyOTkyODEsODA1ODIzNjYzLC05NDUzODc1
-MTgsLTEyOTE3MzU4NDJdfQ==
+eyJoaXN0b3J5IjpbLTE0NzAxNzU2NDAsLTUzMTg5ODQ3LDE5Nj
+YxMTk4MzAsLTE2MzY4NDk3OTgsLTE0NzAyOTkzNTUsLTEyMTI1
+NTMyMjEsLTExNzY0MDI1MywxMTg4MTkwNTk4LDE3Mjg0ODQ2Mj
+AsLTExMTY1MzU0NjksLTE3ODM4NDg2MDcsMzk3MzUyMjg1LC0x
+NDEzOTAyMTM0LC0xOTQ0NTM4OTMsLTIwMzUzNTczMzcsLTEyOD
+E3NTMwNzMsMTY4MjE4OTM4LC0xNzA0NjM5Mzg0LC0xOTg1Mjk5
+MjgxLDgwNTgyMzY2M119
 -->
