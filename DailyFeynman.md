@@ -47,13 +47,19 @@
 12.  one-stage 的特点和缺点？
 
 
-13. Q: DL 问题中使用哪种方法进行模型验证？
+13. DL 问题中使用哪种方法进行模型验证？
     
     使用 Cross Validation，一般是 a training set of 80-90% with the rest in the validation set.
     
     > *注意：使用 untouched dataset 的方法统称为 Cross Validation，即使只随机分了一个 validation set （学名叫做 holdout）也叫做 cross validation。但这里不要用 k-fold 或者 Leave One Out，Udacity 说 DL 算法不适用于这两种方法，因为通常面对大量的数据 validation 时间成本太高了，所以牺牲 variance 换取速度。*
 
-14. Q: ML model 中的 variance bias 分别指什么？
+14. ML model 中的 variance bias 分别指什么？
    
    - Variance 是 the sensitivity of model (if replacing the training set with another unseen set, how much would the error rate change?)
    - Bias 是 the quality of fitting on training set (low bias = low error on training set -> highly potential overfitting)
+
+15. 什么样子的 Validation Set 是理想的？检查 Validation Set 应该注意哪些方面？
+    - 图片不能和 Training Set 太相似，最好是来自两个不同的 Sequence。切忌采用均匀分布来采样。
+    - 标签的 Class Distribution 需要和 Training Set 相近。
+    - 总结：需要在 Label 层面上保持一致，确保各类 class 的比例相近，避免宏观统计上的隐变量；但需要在 Input Signal 层面上避免相似，避免 overfitting 的效果作用在 validation set 上面。
+    - 举例：training set 上是白天乡村的道路，validation set 是夜晚城市的道路，但两者都包含了 80% 的 Car 类和 20% 的 Person 类。
