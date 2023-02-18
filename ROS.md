@@ -94,6 +94,3 @@
   - parameter 只能通过 rosparam 来创建，或者在 .launch 中来调用 element <param> 间接创建
   - parameter 也可以被 node 创建 `nh.setParam("param-name", param-value)`，目前了解到 cpp 只能获取参数的值
   - parameter 一旦被创建之后存储在 parameter server 中，与 node 的存在与否无关，即便 param 是由 node 创建的，在 rosnode kill 后也依然存在
-<!--stackedit_data:
-eyJoaXN0b3J5IjpbLTEzNjkxNDEyMjNdfQ==
--->
