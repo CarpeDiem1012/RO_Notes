@@ -34,7 +34,7 @@ public class Calculator{
             
             case "subtract":
                 System.out.println("Enter two integers:");
-                int add_1, subtract_2;
+                int subtract_1, subtract_2;
 
                 if (input.hasNextInt()) {
                     subtract_1 = input.nextInt();

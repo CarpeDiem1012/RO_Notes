@@ -9,6 +9,3 @@ Previously on
 
 This chapter focuses on __Navigation Competence__.
 *Def.*
-<!--stackedit_data:
-eyJoaXN0b3J5IjpbMTEyNjcyMjk1MF19
--->
