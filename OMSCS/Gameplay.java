@@ -18,11 +18,11 @@ public class Gameplay {
         System.out.println(bob);
         bob.emergencyMeeting();
         System.out.println(suspicousPerson);
-        heath.completeTak();
+        heath.completeTask();
         System.out.println(heath);
-        heath.completeTak();
+        heath.completeTask();
         System.out.println(heath);
-        heath.completeTak();
+        heath.completeTask();
         System.out.println(heath);
         liam.freeze(angel);
         System.out.println(angel);
