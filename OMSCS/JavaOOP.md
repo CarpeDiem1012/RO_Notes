@@ -25,8 +25,10 @@
   - [Constructor Chain](#constructor-chain)
   - [Super](#super)
   - [Overriding](#overriding)
+  - [upcasting](#upcasting)
   - [final](#final)
   - [abstract](#abstract)
+  - [interface](#interface)
 - [Quiz \& CodingError](#quiz--codingerror)
 - [Terminology](#terminology)
 
@@ -208,6 +210,12 @@ String aString; // 代表了 aString 是在 heap 中用于存放该变量的地�
 - 假如不满足上述条件，则视为对于一种**函数重载**（逻辑上可以理解为先继承父类的函数，再对其进行多功能的拓展）
 - 特别注意！overriding 可以使用不同 visibility 的方式，但需要遵循一条原则：任何在 superclass 上奏效的方法一定也会在 subclass 上奏效。例如：superclass 中定义为 private 的成员，允许在 subclass 中改写为 public，但是反之是禁止的。
 
+## upcasting
+```java
+Person p = new Student(); // 已知 Person 是 Student 的 superclass 并且 Student 在继承之后覆写了 run 方法
+p.run() // 执行的是 Student 类的方法，而不是 Person 类的
+```
+
 ## final
 - `final` 修饰的方法不可 overriden 或者 overwritten
 - `final` 修饰的类不可 subclassed
@@ -216,6 +224,17 @@ String aString; // 代表了 aString 是在 heap 中用于存放该变量的地�
 - 类和方法都可以是抽象的
 - 具有抽象方法的类必须也声明为抽象
 - 抽象的方法必须被所有层级下的 subclass 都定义一遍（被 override 的抽象方法不会随着继承关系而延续）
+
+## interface
+```java
+public interface Imposter() {
+  public abstract void freeze(Player p);
+  default 
+}
+```
+- 使用起来相当于一个 abstract 类
+- 同一个 class 可以 implement 多个 interface（然而一个 subclass 最多只能继承一个 superclass）
+- default 方法可以直接在 interface 中进行添加，同时不需要 recompile 使用了该 interface 的所有 implementor，只需要 compile 当前这个 interface 即可
 
 # Quiz & CodingError
 - 相比于 short 类型，byte 类型可以表示最小的数字 [错，这两种都是有符号型，分正负]

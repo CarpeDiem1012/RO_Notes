@@ -1,66 +1,46 @@
 {
   "main": {
-    "id": "4ea810ed24d62c51",
+    "id": "bcd0738c8b27ba5b",
     "type": "split",
     "children": [
       {
-        "id": "3311098abd5aab4c",
+        "id": "32d417d387fe2b22",
         "type": "tabs",
         "children": [
           {
-            "id": "e88644f98f5a0958",
+            "id": "b90fa91ae6a5e9b4",
             "type": "leaf",
-            "pinned": true,
             "state": {
-              "type": "markdown",
-              "state": {
-                "file": "DailyFeynman.md",
-                "mode": "source",
-                "source": true
-              },
-              "pinned": true
+              "type": "empty",
+              "state": {}
             }
           },
           {
-            "id": "27f7cfb3e700485c",
+            "id": "9b2123cde7fce8df",
             "type": "leaf",
             "state": {
-              "type": "markdown",
+              "type": "release-notes",
               "state": {
-                "file": "Udacity/Basis.md",
-                "mode": "preview",
-                "source": true
-              }
-            }
-          },
-          {
-            "id": "8128bfe140e3a851",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "OMSCS/JavaOOP.md",
-                "mode": "source",
-                "source": false
+                "currentVersion": "1.1.16"
               }
             }
           }
         ],
-        "currentTab": 2
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
   },
   "left": {
-    "id": "b52a7bcc0d34cd89",
+    "id": "9eef90e6386dd5a0",
     "type": "split",
     "children": [
       {
-        "id": "595715956af1dcf7",
+        "id": "49300a8ab590a850",
         "type": "tabs",
         "children": [
           {
-            "id": "9ce030de59d24d65",
+            "id": "d7142c300581eab0",
             "type": "leaf",
             "state": {
               "type": "file-explorer",
@@ -70,7 +50,7 @@
             }
           },
           {
-            "id": "2675c688c97d9168",
+            "id": "1294cf91c7670e37",
             "type": "leaf",
             "state": {
               "type": "search",
@@ -85,7 +65,7 @@
             }
           },
           {
-            "id": "d304960246b0bfbc",
+            "id": "6e8a80541b4e48db",
             "type": "leaf",
             "state": {
               "type": "starred",
@@ -96,23 +76,22 @@
       }
     ],
     "direction": "horizontal",
-    "width": 237.5
+    "width": 300
   },
   "right": {
-    "id": "57c0d5a0c587e583",
+    "id": "a089901552ac7ec5",
     "type": "split",
     "children": [
       {
-        "id": "73e26af92ef2a982",
+        "id": "3c5df1389ff6809c",
         "type": "tabs",
         "children": [
           {
-            "id": "303675862b9a10bf",
+            "id": "3ef8a7ed803b88c0",
             "type": "leaf",
             "state": {
               "type": "backlink",
               "state": {
-                "file": "OMSCS/JavaOOP.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -124,19 +103,18 @@
             }
           },
           {
-            "id": "964fd2bd6d8c7e27",
+            "id": "762557d6c1be6942",
             "type": "leaf",
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "OMSCS/JavaOOP.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
             }
           },
           {
-            "id": "022cc4eb6bc39d07",
+            "id": "75fb665abee04f1d",
             "type": "leaf",
             "state": {
               "type": "tag",
@@ -147,13 +125,11 @@
             }
           },
           {
-            "id": "bbb380ab4b28dae2",
+            "id": "77ef5b2ae96f19d3",
             "type": "leaf",
             "state": {
               "type": "outline",
-              "state": {
-                "file": "OMSCS/JavaOOP.md"
-              }
+              "state": {}
             }
           }
         ]
@@ -173,20 +149,6 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "8128bfe140e3a851",
-  "lastOpenFiles": [
-    "Udacity/Basis.md",
-    "OMSCS/JavaOOP.md",
-    "Untitled",
-    "OMSCS",
-    "DailyFeynman.md",
-    "Papers/MeanTeacher.md",
-    "LaTeX.md",
-    "Python.md",
-    "README.md",
-    "ROS.md",
-    "InformationRetrieval.md",
-    "GameTheoreticalMotionPlanning.md",
-    "GIT.md"
-  ]
+  "active": "9b2123cde7fce8df",
+  "lastOpenFiles": []
 }
