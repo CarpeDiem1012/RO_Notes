@@ -25,11 +25,13 @@
   - [Constructor Chain](#constructor-chain)
   - [Super](#super)
   - [Overriding](#overriding)
-  - [upcasting](#upcasting)
-  - [final](#final)
-  - [abstract](#abstract)
-  - [interface](#interface)
-- [Quiz \& CodingError](#quiz--codingerror)
+  - [Upcasting \& Downcasting](#upcasting--downcasting)
+  - [Final](#final)
+  - [Abstract](#abstract)
+  - [Interface](#interface)
+  - [Exception](#exception)
+- [必备知识](#必备知识)
+  - [Generics](#generics)
 - [Terminology](#terminology)
 
 
@@ -114,8 +116,8 @@ String aString; // 代表了 aString 是在 heap 中用于存放该变量的地�
 - 关系操作符不适用于 String
 
 ## I/OStream
-- stream 收集 IStream 输入的所有字符并转义
-- tokens 默认的 delimiter 是 whitespace
+- stream 收集 IStream 输入的所有字符并转义（以回车为终止）
+- tokens 默认的 delimiter 是 whitespace（space \t \n \r）
 - `Scanner.next*()` 函数会实时触发中断并且等待 IOStream，处理后剩余的部分会储存在 Scanner 的 buffer 当中
 - `Scanner.nextInt()`，`Scanner.next()` 会识别并提取 `\n` 之前的部分，把 `\n` 留给后面的 next operator 来处理；`Scanner.nextline()` 会识别并提取 `\n`，处理过后会消除掉 stream buffer 中的 `\n`
 
@@ -164,12 +166,19 @@ String aString; // 代表了 aString 是在 heap 中用于存放该变量的地�
 - switch 语句中 case 后面记得写 break，否则会接着执行下一个 case
 
 # OOP
-- 三大特性：encapsulation、inheritance、multi
+- 三大特性：encapsulation、inheritance、polymorphism
 - Encapsulation：
   - Every instance data should be private.
   - Client of class should only manipulate these variables using public methods
 - Inheritance:
   - 一个 superclass 可以有多个 subclass，但一个 subclass 无法继承多个 superclass，此时只能遵循 maximum similarity 原则来选一个作为 actual parent
+- Polymorphism:
+  - 真实类型取决于 instantiate 阶段跟在 `new` 操作符后面的类型，而不是 declaration 阶段申明的类型
+    ```java
+    Canine pixy;
+    pixy = new Poodle();
+    // pixy 的真实类型是 Poodle，但同时具有 Canine 所具有的一切属性，因为是 superclass
+    ```
 - class 可以嵌套定义
 - 所有 java 的类都有内建函数 obj.toString() 返回一个带有类名和哈希值的 String 类型。假如直接对 obj 使用 println() 则会默认调用 toString() 函数
 - 重载 toString() 方法可以帮助我们使用 println 来自定义输出
@@ -183,8 +192,8 @@ String aString; // 代表了 aString 是在 heap 中用于存放该变量的地�
 
 ## Static
 - 静态方法只能调用静态变量，不能直接和非静态（instance）之间互动
-- static 成员函数不能被 instance 调用
-- 但是 static 成员变量却可以被所有 instance 共享持有
+- static 成员函数和变量可以作为 “类的特性”，内化于每一个 instance 之内，不会因为 instance 的创建而拷贝依存在新的对象之中，且不能被 instance 调用或修改
+- 但是 static 函数和变量可以作为 “类的特性” 被自己和所有子类在定义方法时调用
 
 ## Accessor and Muatator
 - accessor 使用 public 方法来读取类私有的成员变量
@@ -210,31 +219,128 @@ String aString; // 代表了 aString 是在 heap 中用于存放该变量的地�
 - 假如不满足上述条件，则视为对于一种**函数重载**（逻辑上可以理解为先继承父类的函数，再对其进行多功能的拓展）
 - 特别注意！overriding 可以使用不同 visibility 的方式，但需要遵循一条原则：任何在 superclass 上奏效的方法一定也会在 subclass 上奏效。例如：superclass 中定义为 private 的成员，允许在 subclass 中改写为 public，但是反之是禁止的。
 
-## upcasting
+## Upcasting & Downcasting
 ```java
-Person p = new Student(); // 已知 Person 是 Student 的 superclass 并且 Student 在继承之后覆写了 run 方法
-p.run() // 执行的是 Student 类的方法，而不是 Person 类的
+Person p; // 已知 Person 是 Student 的 superclass
+p = new Student(); // p 的名义类型是 Person，但实际类型（引用地址指向）是 Student
+p.run();
+
+// Case 1:  Student 在继承之后覆写了 run() 方法，
+// 则，执行的是 Student 类的方法，而不是 Person 类的
+
+// Case 2 (Dynamic Binding):  Student 没有 run() 方法，
+// 则，执行的是 Student 在关系树上游距离其最近的拥有 run() 的类的 run()，因此不一定是 Person 类的（除非 Person 就是）
+
+// Case 3:  Student 在继承之后额外定义了 run() 方法，
+// 则无法执行，因为 p 名义上是 Person，而 Person 没有 run()，需要做 downcasting
+(Student)p.run();
+
+// Case 4:  Student 覆写了 run() 方法，
+Person p = new Person(); // 已知 Person 是 Student 的 superclass
+(Student)p.run(); // compile time 的 Downcasting (Student)p 是合法的
+// 但 runtime 无法执行，因为 p 实际上作为 Person 类，无法被 downcasting 成 subclass
 ```
 
-## final
+- Up or Down 在形式上都可以，但在 runtime 时需要满足 actual class 的 upcasting 才是真正合法的
+- 换言之，downcasting 的本质是一种 declaration 和 instantiation 不一致造成的幻觉。downcasting 只是名义上的类型，实际类型只能做 upcasting。
+
+## Final
 - `final` 修饰的方法不可 overriden 或者 overwritten
 - `final` 修饰的类不可 subclassed
 
-## abstract
+## Abstract
 - 类和方法都可以是抽象的
 - 具有抽象方法的类必须也声明为抽象
 - 抽象的方法必须被所有层级下的 subclass 都定义一遍（被 override 的抽象方法不会随着继承关系而延续）
 
-## interface
+## Interface
 ```java
 public interface Imposter() {
-  public abstract void freeze(Player p);
-  default 
+  public int aInt; // 这是非法的！
+  public static final int AINT=100; // 这是合理的！
+
+  public abstract void freeze(Player p); // 等同于 void free(Player p); 只声明不定义
+  static void print(){
+    Sysytem.out.println("I am here!");
+  } // 直接定义静态方法
+  default void sabotage(Player p) {
+    Sysytem.out.println("Ouch!");
+  } // 直接在此处定义，而不是先声明，再在 implementor 中定义
 }
 ```
 - 使用起来相当于一个 abstract 类
-- 同一个 class 可以 implement 多个 interface（然而一个 subclass 最多只能继承一个 superclass）
-- default 方法可以直接在 interface 中进行添加，同时不需要 recompile 使用了该 interface 的所有 implementor，只需要 compile 当前这个 interface 即可
+  - interface 无法声明/定义 instance variable 对象的成员变量
+  - 可以定义类的 static variable（默认 modified as `public static final`）
+  - 可以声明 instance method 对象的成员函数（默认 modified as `public abstract`）
+  - 可以定义 default 方法
+  - 可以定义静态方法
+- default 方法可以直接在 interface 中进行定义，同时不需要 recompile 使用了该 interface 的所有 implementor，只需要 compile 当前这个 interface 即可
+- interface 可以嵌套，此时使用的是 `extends` 而不是 `implements` 关键词
+- 同一个 class 可以 `implement` 多个 interface（然而一个 subclass 最多只能继承一个 superclass）
+- 同一个 interface 可以 `extends` 多个 interface
+
+## Exception
+- An exception represents an error that ***occurs at runtime***. 
+- Throwable Hierarchy 分为 Error 和 Exception 两类；其中 Error 是一类系统无法修复的错误类型，例如 VirtualMachineError 和 OutOfMemoryError；而 Exception 是系统可以借助某些手段创建 handler 的类型。
+- Exception 分为 unchecked（可以顺利compile） 和 checked（explicitly throw otherwise not compiled），对于文件管理来说，一定要在相关 method 末尾加上 `throws FileNotFoundException`，否则将直接无法 compile
+- 
+
+# 必备知识
+## Generics
+类似 C++ 中的 Template，是一种通用型的 class（或者interface），可以通过参数化 <> 来指定其对象和功能
+- Comparable\<O>
+  - .compareTo(O)
+- generic 可以嵌套、多重使用，例如如下 declaration 都是合法的：
+  ```java
+    public class AAA<X, Y>
+    public class BBB<T extends Comparable<T>>
+    public class CCC<T extends Comparable & List > // 可以使用 extends 来对于 T 的 superclass 做限定，注意无论是 superclass 还是 interface 都使用 extends，并且用 & 来连结
+    ``` 
+- List\<E>
+  - .add()
+  - .remove()
+  - .contains()
+- ArrayList\<elementType>(initialCapacity)
+  - 是一种使用 Array 作为底层数据结构的 List 的 implementation，其中使用一个叫做 elementData 的 Object[] 的 Array 来进行动态管理（因为 Object 是所有 Class 的 superclass）
+  - 初始化方法 
+    ```java
+    ArrayList<elementType> aList = new ArrayList<elementType>(initialCapacity)
+    ```
+  - 初始化时不指定长度的时候 initialCapaticity 默认为 10
+  - 指定 <elementType> 后的成为 parameterized type，不指定则称作 raw type
+  - 注意 `int` 或 `double` 的本质是 primitive type 而非 Object，但是 ArrayList 的 autoboxing 特性允许使用 `Integer` `Double` 作为 Object 来参数化 ArrayList，同时自动将每一个元素和 `int` 或 `double` 在赋值和读取的时候映射
+  - 缺点：这种结构并不是动态的，我们总是要 predefine an internal array （capacity），当元素数量随着 add 终于超出预期时，就需要在重新创建一个 internal array，并对旧有的 internal array 进行一次 copy paste，消耗大量的内存和时间
+- LinkedArrayList
+  - 链表是一种动态的、非连续的数据结构
+    - linkedArray.head 是唯一的线索
+    - 空链表：head = null
+    - 单元素链表：head.next = null
+    - 多元素链表：head != end, end.next = null
+    - 元素遍历核心：current = current.next
+    ```java
+    public class GenericLinkedList<E> {
+    private class Node<E> { //inner class
+        E data;
+        Node<E> next;
+        Node(E data, Node<E> next) {
+            this.data = data;
+            this.next = next;
+        }
+    }
+    private Node<E> head; //the only instance variable of the list
+    public GenericLinkedList() {
+        head = null; //the list starts off empty
+    }
+    ```
+  - 缺点：对链表进行索引时，底层逻辑是在按照指针顺序遍历链表，因此需要花费 O(n) 的线性时间。对比下，对列表的索引可以直接索引，底层逻辑是在连续的内存地址上对首地址做 offset，因此只需要花费 O(1) 的常数时间。
+
+## Anonymous Inner Class
+没有名字的 Class，直接使用 interface 的句柄来定义
+- 需要在函数体 {} 之内填补全部的 abstract method
+- 需要在 {} 之后加上分号 ;
+## Functional Interface
+只有一个 abstract method 的 interface（因此也只需要补足唯一的抽象方法，使得其功能上和函数 function 很相似）
+## Lambda Expression
 
 # Quiz & CodingError
 - 相比于 short 类型，byte 类型可以表示最小的数字 [错，这两种都是有符号型，分正负]
@@ -281,6 +387,12 @@ public interface Imposter() {
   ```
 - The private modifier enforces encapsulation, static does not.
 
+- 关于排序算法：insertion ordering selection ordering binary searching
+
+- 关于 interface Comparable<T>，假如某个 Object 使用了该模板，并且 override 了 compareTo(T O) 方法，就可以使用 Array 类的静态方法 Arrays.sort(Object[] O) 来进行（升序）排序
+
+- An exception represents an error that occurs at runtime.
+- `int sum = new Integer(3);` 是可以 compile 的
 
 # Terminology
 - promotion `(float)10.12`

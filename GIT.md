@@ -63,9 +63,9 @@ git reflog // 历史日志查询（用于版本回退后，找回“未来”的
 
 1. 工作区（HEAD）内的文件被乱改，想要复原
 	- if (stage != Null) // after git add
-		- HEAD = stage
+		- HEAD => stage
 	- if (stage == Null) // without git add
-		- HEAD = latest branch
+		- HEAD => latest branch
 
 	```shell
 	git restore <file>
