@@ -32,6 +32,12 @@
   - [Exception](#exception)
 - [必备知识](#必备知识)
   - [Generics](#generics)
+  - [Anonymous Inner Class](#anonymous-inner-class)
+  - [Functional Interface](#functional-interface)
+  - [Lambda Expression](#lambda-expression)
+  - [Pass by Value/Reference](#pass-by-valuereference)
+  - [Primitive Type \& Literal Type \& Class Type](#primitive-type--literal-type--class-type)
+- [Quiz \& CodingError](#quiz--codingerror)
 - [Terminology](#terminology)
 
 
@@ -228,7 +234,7 @@ p.run();
 // Case 1:  Student 在继承之后覆写了 run() 方法，
 // 则，执行的是 Student 类的方法，而不是 Person 类的
 
-// Case 2 (Dynamic Binding):  Student 没有 run() 方法，
+// Case 2 (Dynamic Binding):  Student 没有重定义 run() 方法，
 // 则，执行的是 Student 在关系树上游距离其最近的拥有 run() 的类的 run()，因此不一定是 Person 类的（除非 Person 就是）
 
 // Case 3:  Student 在继承之后额外定义了 run() 方法，
@@ -333,6 +339,16 @@ public interface Imposter() {
     }
     ```
   - 缺点：对链表进行索引时，底层逻辑是在按照指针顺序遍历链表，因此需要花费 O(n) 的线性时间。对比下，对列表的索引可以直接索引，底层逻辑是在连续的内存地址上对首地址做 offset，因此只需要花费 O(1) 的常数时间。
+- 直接使用 Generics Type 来生成 Array
+  ```java
+  T[] backingArray = new T[10];
+  ```
+  是错误的！
+  ```java
+  T[] backingArray = (T[]) new Object[10];
+  ```
+  需要先生成 Object 类型的 Array，再 downcasting 成为下游的 T[] Array
+
 
 ## Anonymous Inner Class
 没有名字的 Class，直接使用 interface 的句柄来定义
@@ -341,6 +357,32 @@ public interface Imposter() {
 ## Functional Interface
 只有一个 abstract method 的 interface（因此也只需要补足唯一的抽象方法，使得其功能上和函数 function 很相似）
 ## Lambda Expression
+
+## Pass by Value/Reference
+Java 全部采用 pass by value。下面举例分析两种情况：
+
+  ```java
+  public static void main(String[] args) {
+      Container count = new Container(0);     // step 1: create new Container named count
+      helper(count);                          // step 2: call the helper method on count
+      System.out.println(count.getItem());    // step 4: print out the value of count
+  }
+
+  // 情况1：x 作为一个 reference variable 的 copy，本身也是个地址，但是在创造之初与 count 指向了同一处内存，函数内的操作使 x 重新指向了另一块地址
+  public static void helper(Container x) {
+      x = new Container(x.getItem() + 1);     // step 3: create a new object reference
+  }
+
+  // 情况2：函数内的操作没有对于 x 进行直接操作，而是对于其 refer to 的地方 ———— 那个 class Container 进行了操作，因此起到了看似 pass by reference 的效果，但实际上是一个 pass by copy value
+  public static void helper(Container x) {
+    x.setItem(x.getItem() + 1);             // step 3: set x's item to x's item + 1, modifying the original object
+  }
+  ```
+
+## Primitive Type & Literal Type & Class Type
+- "class Object 是 Java 中一切的 superclass" 这种说法是不完善的，因此 primitives 和 literals 并不是 class 也没有继承 Object
+- Similarly to primitives, Strings are a very common typing, so rather than creating new objects every time a String is created, **it just creates literals/constants that are stored in a String Pool for faster access.**
+- 使用 literals 方法生成的 String 储存在 StringPool 中，内容相同的 literals 会公用同一个地址，使用 `==` 操作符来检查 reference 的结果为 true，因此不存在两个内容相同的 literals，不论作为左值还是右值
 
 # Quiz & CodingError
 - 相比于 short 类型，byte 类型可以表示最小的数字 [错，这两种都是有符号型，分正负]
