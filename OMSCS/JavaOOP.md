@@ -7,7 +7,7 @@
 - [Basis](#basis)
   - [Concepts](#concepts)
   - [Type Coversion](#type-coversion)
-  - [Predined Classes](#predined-classes)
+  - [Predefined Classes](#predefined-classes)
   - [Gargage Collection](#gargage-collection)
   - [String](#string)
   - [I/OStream](#iostream)
@@ -77,7 +77,7 @@ java HelloWorld # 注意不要带着 .class 扩展名
 - Syntax is the representation of all rules to follow in the programming language, e.g. identifiers, reserved words, symbols.
 - Semantics is the meaning of statements.
 - Errors
-	- Compiler Errors: 只检查 Syntax Errors，例如 `myValue = 10/0` 是语法正确、语义失效的，但是 Compiler 不会报错，换言之，可以 javac 顺利生成 Bytecode 文件，但是 java 执行时回报错。
+	- Compiler Errors: 只检查 Syntax Errors，例如 `myValue = 10/0` 是语法正确、语义失效的，但是 Compiler 不会报错，换言之，可以 javac 顺利生成 Bytecode 文件，但是 java 执行时会报错。
 	- Runtime Errors：原因多样，除了上述情况还可能的原因是 out of memory、在多个资源合作时过早中断进程
 	- Logical Errors
 
@@ -91,7 +91,7 @@ java HelloWorld # 注意不要带着 .class 扩展名
 - Casting
   - 使用 parenthesis 来进行 explicit conversion，向 compiler 表示你已经意识到该转换，避免跳出精度缺失的 compiler error
 
-## Predined Classes
+## Predefined Classes
 由于 class variables (reference variables) 拥有更复杂的结构，在 java 中对其使用一种特殊的内存管理模块叫做 heap（堆）。因此，其和 primitive type variables 在声明阶段的意义是不同的：
 ```java
 // 两者都是在内存中开辟了一个区域用于存储变量
@@ -223,7 +223,7 @@ String aString; // 代表了 aString 是在 heap 中用于存放该变量的地�
 ## Overriding
 - 在 subclass 中重新定义 superclass 的成员，两者必须拥有完全相同的函数签名（返回类型，参数类型和数量）
 - 假如不满足上述条件，则视为对于一种**函数重载**（逻辑上可以理解为先继承父类的函数，再对其进行多功能的拓展）
-- 特别注意！overriding 可以使用不同 visibility 的方式，但需要遵循一条原则：任何在 superclass 上奏效的方法一定也会在 subclass 上奏效。例如：superclass 中定义为 private 的成员，允许在 subclass 中改写为 public，但是反之是禁止的。
+- 特别注意！overriding 可以使用不同 visibility 的方式，但需要遵循向下兼容原则：任何在 superclass 上奏效的方法一定也会在 subclass 上奏效。例如：superclass 中定义为 private 的成员，允许在 subclass 中改写为 public，但是反之是禁止的。
 
 ## Upcasting & Downcasting
 ```java
@@ -278,10 +278,10 @@ public interface Imposter() {
   - interface 无法声明/定义 instance variable 对象的成员变量
   - 可以定义类的 static variable（默认 modified as `public static final`）
   - 可以声明 instance method 对象的成员函数（默认 modified as `public abstract`）
-  - 可以定义 default 方法
+  - (假如想直接定义方法供下游的 implementor 使用) -> 可以定义 default 方法
   - 可以定义静态方法
 - default 方法可以直接在 interface 中进行定义，同时不需要 recompile 使用了该 interface 的所有 implementor，只需要 compile 当前这个 interface 即可
-- interface 可以嵌套，此时使用的是 `extends` 而不是 `implements` 关键词
+- interface 可以继承其他 interface，此时使用的是 `extends` 而不是 `implements` 关键词
 - 同一个 class 可以 `implement` 多个 interface（然而一个 subclass 最多只能继承一个 superclass）
 - 同一个 interface 可以 `extends` 多个 interface
 
@@ -289,7 +289,6 @@ public interface Imposter() {
 - An exception represents an error that ***occurs at runtime***. 
 - Throwable Hierarchy 分为 Error 和 Exception 两类；其中 Error 是一类系统无法修复的错误类型，例如 VirtualMachineError 和 OutOfMemoryError；而 Exception 是系统可以借助某些手段创建 handler 的类型。
 - Exception 分为 unchecked（可以顺利compile） 和 checked（explicitly throw otherwise not compiled），对于文件管理来说，一定要在相关 method 末尾加上 `throws FileNotFoundException`，否则将直接无法 compile
-- 
 
 # 必备知识
 ## Generics
@@ -302,20 +301,20 @@ public interface Imposter() {
     public class BBB<T extends Comparable<T>>
     public class CCC<T extends Comparable & List > // 可以使用 extends 来对于 T 的 superclass 做限定，注意无论是 superclass 还是 interface 都使用 extends，并且用 & 来连结
     ``` 
-- List\<E>
+- List\<E> 是一个 interface
   - .add()
   - .remove()
   - .contains()
-- ArrayList\<elementType>(initialCapacity)
+- ArrayList\<elementType>(initialCapacity) 是一个 class
   - 是一种使用 Array 作为底层数据结构的 List 的 implementation，其中使用一个叫做 elementData 的 Object[] 的 Array 来进行动态管理（因为 Object 是所有 Class 的 superclass）
   - 初始化方法 
     ```java
     ArrayList<elementType> aList = new ArrayList<elementType>(initialCapacity)
     ```
   - 初始化时不指定长度的时候 initialCapaticity 默认为 10
-  - 指定 <elementType> 后的成为 parameterized type，不指定则称作 raw type
+  - 指定 \<elementType> 后的成为 parameterized type，不指定则称作 raw type
   - 注意 `int` 或 `double` 的本质是 primitive type 而非 Object，但是 ArrayList 的 autoboxing 特性允许使用 `Integer` `Double` 作为 Object 来参数化 ArrayList，同时自动将每一个元素和 `int` 或 `double` 在赋值和读取的时候映射
-  - 缺点：这种结构并不是动态的，我们总是要 predefine an internal array （capacity），当元素数量随着 add 终于超出预期时，就需要在重新创建一个 internal array，并对旧有的 internal array 进行一次 copy paste，消耗大量的内存和时间
+  - 缺点：本质上，这种结构于内存中是连续存储的，因此并不能真正意义上的无限动态扩展，我们总是要 predefine an internal array （capacity），当元素数量随着 add 终于超出预期时，就需要在重新创建一个 internal array，并对旧有的 internal array 进行一次 copy paste，消耗大量的内存和时间
 - LinkedArrayList
   - 链表是一种动态的、非连续的数据结构
     - linkedArray.head 是唯一的线索
@@ -351,7 +350,12 @@ public interface Imposter() {
 
 
 ## Anonymous Inner Class
-没有名字的 Class，直接使用 interface 的句柄来定义
+合并了声明和定义，跳过了 class implements interface 的阶段，使用 interfaceName 为没有名字的 Class 作 Type
+```java
+myInterface anonymousClass = new myInterface {
+  // implementation for abstract methods overriding
+};
+```
 - 需要在函数体 {} 之内填补全部的 abstract method
 - 需要在 {} 之后加上分号 ;
 ## Functional Interface
