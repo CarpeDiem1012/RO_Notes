@@ -1,5 +1,6 @@
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.LinkedList;
 
 public class Test {
@@ -39,26 +40,41 @@ public class Test {
         // right = right.getRight();
         // right.setLeft(new TreeNode<Integer>(110));
 
-        // Traversals<Integer> myTraversal = new Traversals<Integer>();
-        // ArrayList<Integer> output = (ArrayList<Integer>)myTraversal.preorder(myTree);
+        int[] arr = new int[]{-2147483648, -2147483648, -9};
+        LinkedList<Integer>[] buckets = (LinkedList<Integer>[]) new LinkedList[19];
+        for (int i=0; i < 19; i++) {
+            buckets[i] = new LinkedList<>();
+        }
+        int base = 1;
+        int k = 1;
 
-        // MinHeap<Integer> myHeap = new MinHeap<>();
-        // myHeap.add(4);
-        // System.out.println(myHeap);
-        // myHeap.add(3);
-        // System.out.println(myHeap);
-        // myHeap.add(2);
-        // System.out.println(myHeap);
-        // myHeap.add(1);
-        // System.out.println(myHeap);
-        // myHeap.remove();
-        // System.out.println(myHeap);
-        // myHeap.remove();
-        // System.out.println(myHeap);
-        // myHeap.remove();
-        // System.out.println(myHeap);
-        // myHeap.remove();
-        // System.out.println(myHeap);
+        // calculate max base `base` and max digit `k`
+        for (int item : arr) {
+            while (item/base >=10 || item/base <=-10) {
+                base = base*10;
+                k ++;
+            }
+        }
+        
+        for (int n=0, b=1; n < k; n++, b*=10) {
+            // push into buckets
+            for (int item : arr) {
+                int i = (item/b) % 10; // last signigicant digit [-9, 9]
+                buckets[i + 9].add(item);
+            }
 
+            // pop from buckets
+            int i = 0;
+            for (int bucketID=0; bucketID < buckets.length; bucketID++) {
+                while (! buckets[bucketID].isEmpty()) {
+                    arr[i] = buckets[bucketID].removeFirst();
+                    i ++;
+                }
+            }
+        }
+        
+        for (int i=0; i<arr.length ; i++) {
+            System.out.println(arr[i]);
+        }
     }
 }

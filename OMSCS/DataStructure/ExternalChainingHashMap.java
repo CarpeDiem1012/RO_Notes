@@ -71,6 +71,46 @@ public class ExternalChainingHashMap<K, V> {
      */
     public V put(K key, V value) {
         // WRITE YOUR CODE HERE (DO NOT MODIFY METHOD HEADER)!
+        if (key==null || value==null) {
+            throw new IllegalArgumentException();
+        }
+
+        // HashCode and Compress
+        int index = key.hashCode() % table.length;
+        index = index>0? index:-index;
+
+        // Find Collision
+        if (table[index]!=null) {
+            ExternalChainingMapEntry<K,V> curr = table[index];
+            while(curr!=null) {
+                // Find duplicate, replace value in place
+                if (curr.getKey().equals(key)) {
+                    V out = curr.getValue();
+                    curr.setValue(value);
+                    return out;
+                }
+                curr = curr.getNext();
+            }
+        }
+        // No duplicates, check LF
+        if ((size+1) / (float)table.length > MAX_LOAD_FACTOR) {
+            resizeBackingTable(table.length*2+1);
+            return this.put(key, value); // resize and put again
+        }
+        else {
+            ExternalChainingMapEntry<K,V> newPair = new ExternalChainingMapEntry<>(key, value);
+            // No Collision
+            if (table[index]==null) {
+                table[index] = newPair;
+            }
+            else {
+                // Add to the front
+                newPair.setNext(table[index]);
+                table[index] = newPair;
+            }
+            size ++;
+            return null;
+        }
     }
 
     /**
@@ -83,6 +123,42 @@ public class ExternalChainingHashMap<K, V> {
      */
     public V remove(K key) {
         // WRITE YOUR CODE HERE (DO NOT MODIFY METHOD HEADER)!
+        if (key==null) {
+            throw new IllegalArgumentException();
+        }
+
+        // HashCode and Compress
+        int index = key.hashCode() % table.length;
+        index = index>0? index:-index;
+
+        ExternalChainingMapEntry<K,V> curr = table[index];
+        // Hash Not Found
+        if (curr==null) {
+            throw new NoSuchElementException();
+        }
+        // No collision OR collision is in the head
+        else if (curr.getKey().equals(key)) {
+            V out = curr.getValue();
+            table[index] = curr.getNext();
+            size --;
+            return out;
+        }
+        // Collision
+        else {
+            // Collision and Found
+            while(curr.getNext()!=null) {
+                // Find duplicate, replace value in place
+                if (curr.getNext().getKey().equals(key)) {
+                    V out = curr.getNext().getValue();
+                    curr.setNext(curr.getNext().getNext());
+                    size --;
+                    return out;
+                }
+                curr = curr.getNext();
+            }
+            // Collision and Not Found
+            throw new NoSuchElementException();
+        }
     }
 
     /**
@@ -104,7 +180,51 @@ public class ExternalChainingHashMap<K, V> {
      */
     private void resizeBackingTable(int length) {
         // WRITE YOUR CODE HERE (DO NOT MODIFY METHOD HEADER)!
+        ExternalChainingMapEntry<K,V>[] newTable = (ExternalChainingMapEntry<K,V>[]) new ExternalChainingMapEntry[length];
+        ExternalChainingHashMap<K,V> newMap = new ExternalChainingHashMap<>();
+        newMap.table = newTable;
+        for (ExternalChainingMapEntry<K,V> item:table) {
+            if (item==null) {
+                continue;
+            }
+            if (item.getNext()!=null) {
+                ExternalChainingMapEntry<K,V> curr = item;
+                while (curr!=null) {
+                    // Add item to newTable
+                    newMap.put(curr.getKey(), curr.getValue());
+                    curr = curr.getNext();
+                }
+            }
+            // Add item to newTable
+            else {
+                newMap.put(item.getKey(), item.getValue());
+            }
+        }
+        table = newMap.table;
     }
+
+    // @Override
+    // public String toString() {
+    //     String out = "";
+    //     for (ExternalChainingMapEntry<K,V> item:table) {
+    //         if (item==null) {
+    //             continue;
+    //         }
+    //         if (item.getNext()!=null) {
+    //             ExternalChainingMapEntry<K,V> curr = item;
+    //             while (curr!=null) {
+    //                 // Add item to newTable
+    //                 out += curr.toString();
+    //                 curr = curr.getNext();
+    //             }
+    //         }
+    //         // Add item to newTable
+    //         else {
+    //             out += item.toString();
+    //         }
+    //     }
+    //     return out;
+    // }
 
     /**
      * Returns the table of the map.

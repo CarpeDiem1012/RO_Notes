@@ -35,6 +35,7 @@
     - [BST](#bst)
     - [Heap （Binary）](#heap-binary)
   - [SkipList](#skiplist)
+  - [HashMap](#hashmap)
 - [头脑风暴](#头脑风暴)
 
 # Basis
@@ -238,7 +239,7 @@ Actual concrete implementations of data handling for ADT are called Data Structu
   - 1-child: 继承唯一的 branch -> return current.right/left
   - 2-child: 需要寻找 predecessor 或 successor 作为来接替当前的位置
 
-- 重要的技巧：Pointer Reinforcement Pseudocode 利用多层递归简化逻辑
+- 重要的技巧：Pointer Reinforcement Pseudocode 利用多层递归简化逻辑，相比于 look-ahead 方法，PR 通过层层递归直接对于 base case 进行处理，不需要考虑复杂数据结构下 childNode 的复杂情况
   ```java
   private Node recursiveRemove(Node curr, T args) {
     // something opration...
@@ -291,6 +292,22 @@ Actual concrete implementations of data handling for ADT are called Data Structu
   - Average case O(log(n))
   - Worst case O(n)
 
+## HashMap
+- Set：只有 key 没有 value 的 unordered set
+- Map：包含 (k, v) pair 的 unordered set
+- Collision Solution
+  - Closed-addressed (External Chaining)：
+    - LinkedList
+  - Open-addresed (Probing)：
+    - Linear (a special-case double hasing with m=1)
+    - Quaduatic
+    - Double hashing
+- 实际上，设计合理的 HashFunction 和 CompressionFunction 其实比绞尽脑汁想 Collision Solution 要有效得多
+- 2023 年各个语言内部的 HashMap Collision Implementation
+  - C++：
+  - Python：
+  - Java：
+
 # 头脑风暴
 1. In a previous lesson, we briefly discussed the union operation, described as follows: "Consider two MinHeaps of sizes m and n as our input. Output one MinHeap of combined size (m+n) containing all data from both heaps." 
    - What is the worst case time complexity of this operation?
@@ -302,3 +319,11 @@ Actual concrete implementations of data handling for ADT are called Data Structu
 
 2. In Scenario 1, there are only 248 addresses to consider, and they're in a nice, contiguous block. The rest of the IP address information is superfluous and thus does not need to be stored. A simple shift in the X part of the address should do nicely for a Bit Array. This is in comparison to a HashMap, which will have to deal with hashing and possible collisions. In fact, if implemented well, a HashMap could be made to act like a bit array in this context. In Scenario 2, there are likely many users, with a variety of IP Addresses. Creating an array to hold an index for every possible IP Address is intractable, so some sort of hashing scheme will be necessary.
 3. 对于一个使用 closed-opening 来解决 collision 的 HashMap，假如不用 LinkedList 作为 collision 的存储结构，而改用一般的 BST （非 Heap 或 balanced），则 worst case time complexit of resizing is $O(N^2)$
+4. 对于 MergeSort 的最后几层 recursion 使用 InsertSort 来替代，是否是一种 theoretically and practically beneficial optimization？ YES!!! 不要用过于 high-level 的视角来分析实际问题，并且算法要和硬件特点相结合！
+   > Explanation:
+   > 
+   > This modification is a good idea, and in fact, you will see a somewhat similar idea in an algorithm called intro sort. Intro sort will begin with quick sort (we'll see this in the next lesson), then switch to a different sorting algorithm (called heap sort) once it reaches a certain subarray size threshold, and it will switch to insertion sort once it reaches another threshold. This idea is good for several reasons.
+   > 
+   > **Merge sort and insertion sort are good at different input sizes.** (因为越高级的算法往往需要越复杂繁琐的判断条件，这些额外引入的常数项和低阶项会在 n 不够大的时候成为一种累赘) Merge sort is great for very large arrays due to the halving, but this halving has diminishing returns. At some point, the overhead of splitting, copying, and merging will overtake the benefits of halving the search space. This occurs precisely for small values of . On the other hand, insertion sort has relatively small constants, so when  is small, it actually outperforms merge sort. So, Bob's analysis was faulty because it was too loose. He should've done a more careful analysis **keeping track of constant factors and lower order terms.** (不要盲目崇拜 Big-O 的定性分析，在涉及到具体问题的时候，往往会有很多的约束条件，此时考虑 constant factor 和 lower order term 才是决定走向的关键)
+   > 
+   > On the other hand, there are other reasons that this is a good idea. For one, the last phases of the recursive calls will end with an **inplace algorithm** (InsertSort 的优点), which somewhat mitigates the large space overhead of merge sort. It also makes it **somewhat adaptive** (InsertSort 的优点) since we will no longer be splitting completely sorted subarrays. Finally, **insertion sort has the benefit of locality of reference**(考虑到计算机底层机制的一种 bonus). All array accesses and swaps are done on the same array and in adjacent locations unlike merge sort where we have multiple arrays, and copies occur between different arrays.
