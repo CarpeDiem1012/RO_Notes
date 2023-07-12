@@ -36,6 +36,18 @@
     - [Heap （Binary）](#heap-binary)
   - [SkipList](#skiplist)
   - [HashMap](#hashmap)
+  - [AVLTree](#avltree)
+  - [2-4 Tree](#2-4-tree)
+  - [Iterative Sort](#iterative-sort)
+  - [Divide and Conquer Sort](#divide-and-conquer-sort)
+- [Pattern Matching Algorithm](#pattern-matching-algorithm)
+  - [Brute-force Search](#brute-force-search)
+  - [Boyer-Moore (BM) Algo](#boyer-moore-bm-algo)
+    - [Scenarios](#scenarios)
+  - [Kruth- (KMP) Algo](#kruth--kmp-algo)
+    - [Scenarios](#scenarios-1)
+  - [Rabin-Karp (RK) Algo](#rabin-karp-rk-algo)
+    - [Scenarios](#scenarios-2)
 - [头脑风暴](#头脑风暴)
 
 # Basis
@@ -242,14 +254,14 @@ Actual concrete implementations of data handling for ADT are called Data Structu
 - 重要的技巧：Pointer Reinforcement Pseudocode 利用多层递归简化逻辑，相比于 look-ahead 方法，PR 通过层层递归直接对于 base case 进行处理，不需要考虑复杂数据结构下 childNode 的复杂情况
   ```java
   private Node recursiveRemove(Node curr, T args) {
-    // something opration...
+    // something for operation...
     if (data > curr.data) {
       curr.left = recursiveRemove(curr.left, args);
     }
     if (data < curr.data) {
       curr.right = recursiveRemove(curr.right, args);
     }
-    // something opration...
+    // something for operation...
     return curr
   }
   ```
@@ -307,6 +319,44 @@ Actual concrete implementations of data handling for ADT are called Data Structu
   - C++：
   - Python：
   - Java：
+  
+
+## AVLTree
+
+## 2-4 Tree
+- B-Tree
+- Multiple Search Tree
+- Red-Black Tree 
+
+## Iterative Sort
+- Bubble Sort
+- Insertion Sort
+- Selection Sort
+- Heap Sort
+
+## Divide and Conquer Sort
+- Merge Sort
+- Quick Sort
+- Quick Selection
+- LSD Ridex Sort
+
+# Pattern Matching Algorithm
+- pattern of length m, text of length n
+- 分类：
+  - Single Occurance
+  - All Occurance
+## Brute-force Search
+## Boyer-Moore (BM) Algo
+### Scenarios
+  - Bigger alphabet：尽量少出现 repetition，可以使得 last occurrence table 里的 occurrence 不被频繁刷新，进而实现最大程度上的跳跃
+## Kruth- (KMP) Algo
+### Scenarios
+  - Streaming information：因为永远向前，而 BM 需要在每个 window 内部从后向前遍历
+  - Smaller alphabet, More repetition：越多的重复项更有可能产生 prefix-suffix pairs，使得 failure table 内部拥有更多 non-zero element，否则 FT 失去了使用价值
+  - 过多的 repetition 会使得 BM degenerate to Brute-force，而没有 repetition 会使得 KMP degenerate to Brute-force
+## Rabin-Karp (RK) Algo
+### Scenarios
+ - 相比于 BM 和 KMP 来说，RK 对于 pattern 的结构没有特别的要求，虽然可能会有 computational overhead，但是表现比较均衡，good adaptability
 
 # 头脑风暴
 1. In a previous lesson, we briefly discussed the union operation, described as follows: "Consider two MinHeaps of sizes m and n as our input. Output one MinHeap of combined size (m+n) containing all data from both heaps." 
