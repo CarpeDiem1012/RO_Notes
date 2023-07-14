@@ -44,10 +44,19 @@
   - [Brute-force Search](#brute-force-search)
   - [Boyer-Moore (BM) Algo](#boyer-moore-bm-algo)
     - [Scenarios](#scenarios)
-  - [Kruth- (KMP) Algo](#kruth--kmp-algo)
+  - [Kruth-Morris-Pratt (KMP) Algo](#kruth-morris-pratt-kmp-algo)
     - [Scenarios](#scenarios-1)
   - [Rabin-Karp (RK) Algo](#rabin-karp-rk-algo)
     - [Scenarios](#scenarios-2)
+- [Graph Theory](#graph-theory)
+  - [Graph](#graph)
+  - [数据结构](#数据结构)
+  - [Search](#search)
+    - [Depth First Search](#depth-first-search)
+    - [Breadth First Search](#breadth-first-search)
+    - [Time Complexity](#time-complexity)
+    - [Space Complexity](#space-complexity)
+    - [Dijkstra Algo](#dijkstra-algo)
 - [头脑风暴](#头脑风暴)
 
 # Basis
@@ -332,12 +341,13 @@ Actual concrete implementations of data handling for ADT are called Data Structu
 - Bubble Sort
 - Insertion Sort
 - Selection Sort
+- Cocktail Shaker Sort (Bi-directional Bubble)
 - Heap Sort
 
 ## Divide and Conquer Sort
 - Merge Sort
 - Quick Sort
-- Quick Selection
+- k-th Quick Selection
 - LSD Ridex Sort
 
 # Pattern Matching Algorithm
@@ -349,7 +359,7 @@ Actual concrete implementations of data handling for ADT are called Data Structu
 ## Boyer-Moore (BM) Algo
 ### Scenarios
   - Bigger alphabet：尽量少出现 repetition，可以使得 last occurrence table 里的 occurrence 不被频繁刷新，进而实现最大程度上的跳跃
-## Kruth- (KMP) Algo
+## Kruth-Morris-Pratt (KMP) Algo
 ### Scenarios
   - Streaming information：因为永远向前，而 BM 需要在每个 window 内部从后向前遍历
   - Smaller alphabet, More repetition：越多的重复项更有可能产生 prefix-suffix pairs，使得 failure table 内部拥有更多 non-zero element，否则 FT 失去了使用价值
@@ -357,6 +367,41 @@ Actual concrete implementations of data handling for ADT are called Data Structu
 ## Rabin-Karp (RK) Algo
 ### Scenarios
  - 相比于 BM 和 KMP 来说，RK 对于 pattern 的结构没有特别的要求，虽然可能会有 computational overhead，但是表现比较均衡，good adaptability
+
+# Graph Theory
+## Graph
+- Vertex (`V`) & Edge (`E`) & Order (`||`)
+- `Path` & `Trail` & `Walk`
+- `Cycle` & `Circuit`
+- `Directed` & `Undirected`
+- `Self-loop` & `Parallel Edges`
+- `Simple Graph` & `Multigraph`
+- `Acyclic` & `Cyclic`
+- `Disconnected` & `Weakly Connected` & `Strongly Connected`
+- Tree = Acylic + Connected, using minimum edges to maintain connectedness |E|=|V|-1
+
+## 数据结构
+- Adjacent Matrix
+- Adjacent List
+- Edge List (不显式地储存 vertices 信息)
+
+## Search
+### Depth First Search
+- non-recursive：使用了 stack 结构，对于早遍历的 vertex 的
+- recursive：本质上是使用 for 循环来代替了 stack 的作用，使得 parent recursion 的状态能够保留，在成功完成 child recursion 之后再回溯到最近的分叉节点
+> 注意这两种 implementation 下的 visiting order 是不一样的，前者先 visit 再 go deeper，后者先 go deeper 再 visit
+### Breadth First Search
+### Time Complexity
+O(|V| + |E|)的理解：对于 DFS 和 BFS来说，本质上都是对于每一个 vertex 的 incident 进行 edge 搜索，逻辑不同而已。其中，对于每一个 vertex 进行的操作是
+
+### Space Complexity
+- 对于 stack 和 queue 来说，需要不断存放更新探索过程中还来不及弹出的 buffer vertex
+- 对于 recursion 来说，重要的则是 recursion 的层数，因为递归在底层机制上是借用程序代码段的栈指针来进行状态记忆
+
+### Dijkstra Algo
+- 形象记忆：大水漫灌迷宫，使用等距离线来确定最优
+- 核心 Assumption：动态规划思想，到达当前 vertext 的最短距离 = min{到达某个相邻节点的最短距离 + 这段 edge 的长度 for 所有相邻节点}
+
 
 # 头脑风暴
 1. In a previous lesson, we briefly discussed the union operation, described as follows: "Consider two MinHeaps of sizes m and n as our input. Output one MinHeap of combined size (m+n) containing all data from both heaps." 
@@ -377,3 +422,11 @@ Actual concrete implementations of data handling for ADT are called Data Structu
    > **Merge sort and insertion sort are good at different input sizes.** (因为越高级的算法往往需要越复杂繁琐的判断条件，这些额外引入的常数项和低阶项会在 n 不够大的时候成为一种累赘) Merge sort is great for very large arrays due to the halving, but this halving has diminishing returns. At some point, the overhead of splitting, copying, and merging will overtake the benefits of halving the search space. This occurs precisely for small values of . On the other hand, insertion sort has relatively small constants, so when  is small, it actually outperforms merge sort. So, Bob's analysis was faulty because it was too loose. He should've done a more careful analysis **keeping track of constant factors and lower order terms.** (不要盲目崇拜 Big-O 的定性分析，在涉及到具体问题的时候，往往会有很多的约束条件，此时考虑 constant factor 和 lower order term 才是决定走向的关键)
    > 
    > On the other hand, there are other reasons that this is a good idea. For one, the last phases of the recursive calls will end with an **inplace algorithm** (InsertSort 的优点), which somewhat mitigates the large space overhead of merge sort. It also makes it **somewhat adaptive** (InsertSort 的优点) since we will no longer be splitting completely sorted subarrays. Finally, **insertion sort has the benefit of locality of reference**(考虑到计算机底层机制的一种 bonus). All array accesses and swaps are done on the same array and in adjacent locations unlike merge sort where we have multiple arrays, and copies occur between different arrays.
+
+5. Space Complexity in terms of Branch Factors: Suppose we are running BFS on a tree with branch factor  from the root (a BST has a branch factor of ). The goal isn't to store a visit ordering of the nodes but rather to do some operation in the visit ordering as we dequeue each vertex from the queue. The tree's depth is . What is the worst case space complexity of BFS in this scenario? Keep in mind that since we're in a tree, we do not need to store visiting information.
+   > $O(b^d)$
+
+   What is the space complexity of recursive DFS when in the same scenario as above?
+   > $O(d)$
+
+6. 
