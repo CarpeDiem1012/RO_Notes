@@ -57,6 +57,9 @@
     - [Time Complexity](#time-complexity)
     - [Space Complexity](#space-complexity)
     - [Dijkstra Algo](#dijkstra-algo)
+- [Minimum Spanning Tree (MST)](#minimum-spanning-tree-mst)
+  - [Prim's Algo \<- cutting edge property](#prims-algo---cutting-edge-property)
+  - [Kruskal's Algo \<- cycle property](#kruskals-algo---cycle-property)
 - [头脑风暴](#头脑风暴)
 
 # Basis
@@ -285,7 +288,7 @@ Actual concrete implementations of data handling for ADT are called Data Structu
   - right-child = backingArray[2k+1]
   - last leaf-node = backingArray[size]
   - 没有意义的 node -> backingArray[0]
-- add/remove 分为两步：先 add/remove to Array，再 reorder to top/bottom
+- add/remove 分为两步：先 add/remove to Array，再 reorder to top/bottom，注意不管对于 top-down 还是 bottom-up 而言，都只需要沿着交换的那一条 path 单向走到头即可，不需要一边向前，一边回头维护 subTree
   - best case $O(log(n))$，heap 由于结构上的 balance 使得 best case 和 worst case 都可以做到每层二分，保证了下限
   - average case $O(log(n))$
   - worst case for remove $O(log(n))$
@@ -357,6 +360,7 @@ Actual concrete implementations of data handling for ADT are called Data Structu
   - All Occurance
 ## Brute-force Search
 ## Boyer-Moore (BM) Algo
+- 注意小于等于 for (int idStart=0; idStart <= n-m; ) 
 ### Scenarios
   - Bigger alphabet：尽量少出现 repetition，可以使得 last occurrence table 里的 occurrence 不被频繁刷新，进而实现最大程度上的跳跃
 ## Kruth-Morris-Pratt (KMP) Algo
@@ -381,9 +385,9 @@ Actual concrete implementations of data handling for ADT are called Data Structu
 - Tree = Acylic + Connected, using minimum edges to maintain connectedness |E|=|V|-1
 
 ## 数据结构
-- Adjacent Matrix
-- Adjacent List
-- Edge List (不显式地储存 vertices 信息)
+- Adjacent Matrix O(|V|^2) 适用于 dense gragh
+- Adjacent List O(|V|) 适用于 sparse graph
+- Edge List (不显式地储存 vertices 信息) O(|E|)
 
 ## Search
 ### Depth First Search
@@ -400,8 +404,53 @@ O(|V| + |E|)的理解：对于 DFS 和 BFS来说，本质上都是对于每一�
 
 ### Dijkstra Algo
 - 形象记忆：大水漫灌迷宫，使用等距离线来确定最优
-- 核心 Assumption：动态规划思想，到达当前 vertext 的最短距离 = min{到达某个相邻节点的最短距离 + 这段 edge 的长度 for 所有相邻节点}
+- 核心 Assumption：贪心算法思想，到达当前 vertext 的最短距离 = min{到达某个相邻节点的最短距离 + 这段 edge 的长度 for 所有相邻节点}，保证当前最优，但无法保证全局最优，直到遍历之前
+- 数据结构：
+  - Visited Set: HashSet/HashMap
+  - Distance Map: HashSet/HashMap
+  - Priority Queue: Binary Heap
+- Time Complexity
+  - 简单版本：
+    - 每一轮更新最短距离后，压入 PQ (binary heap) 的元素是当前 vertex 的 edge，因此整个动态过程中， PQ 大小的上确界是 O(|E|)，那么每一次 removal 就近似是一个 O(log(|E|))，而这样的 removal 总共有 O(|E|) 次
+    - 因此 total time complexity = $O(|E|log(|E|))$
+  - 优化版本（改用存在容纳上限的 min-priority queue）：
+    - 其实本质上只需要 dequeue 所有 reachable vertices 数量的次数就可以实现，并不真的需要 O(|E|) 次，但由于 PQ 中存在的 (vertex, distance) pair 并不一定是 optimal 的（Visited Set 中存在的才是 optimal 的），导致维护一个大小为 O(|E|) 的 PQ 会出现同一个 vertex 对应多个 distance 的情况，因此简单版本中认为需要 dequeue O(|E|) 次
+    - 现在有一种优化操作，使得每一次 enqueue 的时候，相比于之前的增添一个重复的 vertex，现在可以直接更新那个 vertex 的距离使其为历史最小值，完全去除了冗余，那么 PQ 就不必保持 O(|E|) 的大小了 (并且借助 HashMap 作为 backingArray，可以实现 O(1) 的 search，因此 updating 是一个 O(log n) )
+    - 对于 starting vertex 来说，把 reachable vertices（即之间存在 trail）的数量记作 k，因此只要把 k 个 vertices 加入 Visited Set 就可以结束算法。那么使用一个容量上限为 k 的 min-QP 就可以实现目的。弹出/新增/刷新 min-PQ (binary heap) 都是 O(log(k))，但是弹出需要 O(k) 次，而新增/刷新需要 O(|E|) 次（因为依然要考虑目标 vertex 的每一条 edge）
+    - 又有 k=O(|V|), 因此 total time complexity = $O((|V|+|E|) \cdot log|V|)$
+    - 对于 connected graph，存在 |E| >= |V| - 1，因此简化为 $O(|E| \cdot log|V|)$
+    - 对于使用 Adjacent matrix 的情况，是一个 $O(|V|^2)$
+- Scenarios:
+  - 对于存在 negative weights 的图，可以分为两类：
+    - 构成了 negative cycle：沿着 cycle 的 Sum of Weight is negative
+    - 不含有 negative cycle 只有 negative weights 
+  - 但 Dijkstra 只适用于没有 negetive weights 的 graph，否则应该使用
+    - Bellman-Ford Algo -> $O(|V|\cdot|E|)$
+    - Floyd-Warshall Algo -> $O(|V|^3)$
 
+# Minimum Spanning Tree (MST)
+- 定义：这样一种 Tree，其包含原图所有的 vertices 的同时 total edge weights 是最小的
+  - MST 是一个 subgraph
+  - Tree 本身属于一种 acyclic connected graph
+  - MST 具有两个性质：
+    - cutting edge property：对于原图任意一刀 cut，都会生成一对 subgraphs，连接两者的多条 edge 之中最短的那一条一定在 MST 之中
+    - cycle property：对于原图中存在的任意一条 cycle 而言，其中最长的 edge 一定不在 MST 之中
+> MST 本身比较抽象，只需要记住和利用这两条性质。从原理上彻底理解比较困难，面对大多数判断题只需要找反例就好。
+## Prim's Algo <- cutting edge property
+  - 类似 Dijkstra，但是 en/de priority queue 的标准是 edge weight，优先小权重的
+  - Time Complexity 和 Dijkstra 相同: $O((|E|+|V|)log(|V|))$
+## Kruskal's Algo <- cycle property
+  - 先对于所有的 edge 做一个 buildHeap 放入 MinPQ (需要 $O(|E|)$)，然后从最小的开始 dequeue，当前 edge 会形成 cycle 的话就舍弃，否则纳入 MST 中
+    - 阶段1：构建 heap，即 MinPQ
+    - 阶段2：依次 dequeue
+    - 阶段3：cycle detection，然后加入 MST
+  - Time Coplexity: $O(|E|log(|E|))$
+    - 优化1：对于 disjoint sets 使用 path compression（底层逻辑使用 pointer reinforcement），保证后续每一次 findRoot 的操作都是 O(1)
+    - 优化2：对于每一个 disjoint sets 不必更新所有节点的 height，转而去维护一个 rank，使得 union 操作也是一个 O(1)
+      - rank 大的 set 的 root 作为 parent，rank 小的 root 作为 child
+      - rank 相等时任选其一（看题目要求），同时对于父节点所在的 set 的 rank +1
+    - disjoint sets 的使用，借助了一种增长极端缓慢的函数 inverse Ackermann function，使得上述的 amortized cost 降至 O(1)
+    - 对于一个 presorted edge list，不需要 heap，直接用 queue 可以实现 O(|E|)
 
 # 头脑风暴
 1. In a previous lesson, we briefly discussed the union operation, described as follows: "Consider two MinHeaps of sizes m and n as our input. Output one MinHeap of combined size (m+n) containing all data from both heaps." 

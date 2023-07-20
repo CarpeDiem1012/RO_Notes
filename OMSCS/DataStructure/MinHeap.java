@@ -43,7 +43,7 @@ public class MinHeap<T extends Comparable<? super T>> {
         if (data==null) {
             throw new IllegalArgumentException();
         }
-        // add new data
+        // add new data to backing array with full capacity 
         if (backingArray.length - 1 == size) {
             T[] newArray = (T[]) new Comparable[backingArray.length*2];
             for (int i=0; i<backingArray.length; i++) {
@@ -52,11 +52,13 @@ public class MinHeap<T extends Comparable<? super T>> {
             newArray[size+1] = data;
             backingArray = newArray;
         }
+        // add new data
         else {
             backingArray[size+1] = data;
         }
         size ++;
         // reorder subheap
+        // 注意：这里的 implementation 有问题！虽然结果是正确的，但是不管对于 top-down 还是 bottom-up 而言，都只需要沿着交换的那一条 path 单向走到头即可，不需要回头维护 subTree
         int id = size/2;
         while (id>0) {
             reorderSubHeap(id);
@@ -64,6 +66,7 @@ public class MinHeap<T extends Comparable<? super T>> {
         }
     }
 
+    // 这是一个用于 remove 的 top-down reordering，也可以用于 add 但是有很大的 computational overhead 效率很低。对于一个 add 操作，应该专门为其写一个 bottom-up reordering
     private void reorderSubHeap(int start) {
         // base case: no child, do nothing
         if (start > size/2) {
@@ -73,7 +76,7 @@ public class MinHeap<T extends Comparable<? super T>> {
             T curr = backingArray[start];
             T left = backingArray[start*2];
             T right = start*2+1 > size? null:backingArray[start*2+1];
-            int smallerId = right==null || left.compareTo(right)<0 ? (start*2):(start*2+1);
+            int smallerId = (right==null || left.compareTo(right)<0) ? (start*2):(start*2+1);
             if (curr.compareTo(backingArray[smallerId]) > 0) {
                 backingArray[start] = backingArray[smallerId]; // swap
                 backingArray[smallerId] = curr;
