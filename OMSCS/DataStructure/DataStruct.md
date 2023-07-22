@@ -60,6 +60,7 @@
 - [Minimum Spanning Tree (MST)](#minimum-spanning-tree-mst)
   - [Prim's Algo \<- cutting edge property](#prims-algo---cutting-edge-property)
   - [Kruskal's Algo \<- cycle property](#kruskals-algo---cycle-property)
+- [Why Kruskal uses Disjoint Sets rather than Visited Set?](#why-kruskal-uses-disjoint-sets-rather-than-visited-set)
 - [头脑风暴](#头脑风暴)
 
 # Basis
@@ -360,10 +361,12 @@ Actual concrete implementations of data handling for ADT are called Data Structu
   - All Occurance
 ## Brute-force Search
 ## Boyer-Moore (BM) Algo
-- 注意小于等于 for (int idStart=0; idStart <= n-m; ) 
+- 预处理：使用 last occurance table，记录当前 char 在 pattern 中上一次出现的时候的 index
+- 注意小于等于 for (int idStart=0; idStart <= n-m; )
 ### Scenarios
   - Bigger alphabet：尽量少出现 repetition，可以使得 last occurrence table 里的 occurrence 不被频繁刷新，进而实现最大程度上的跳跃
 ## Kruth-Morris-Pratt (KMP) Algo
+- 预处理：使用 failure table，记录和 pattern 中和 prefix 相匹配之处的 index
 ### Scenarios
   - Streaming information：因为永远向前，而 BM 需要在每个 window 内部从后向前遍历
   - Smaller alphabet, More repetition：越多的重复项更有可能产生 prefix-suffix pairs，使得 failure table 内部拥有更多 non-zero element，否则 FT 失去了使用价值
@@ -452,6 +455,10 @@ O(|V| + |E|)的理解：对于 DFS 和 BFS来说，本质上都是对于每一�
     - disjoint sets 的使用，借助了一种增长极端缓慢的函数 inverse Ackermann function，使得上述的 amortized cost 降至 O(1)
     - 对于一个 presorted edge list，不需要 heap，直接用 queue 可以实现 O(|E|)
 
+# Why Kruskal uses Disjoint Sets rather than Visited Set?
+- The visited set worked in the DFS, BFS, Dijkstra's, and Prim's algorithms because they all built their solution outward from a single source. Kruskal's algorithm does not use a single source; it builds clusters globally across the graph, which is why a new solution is needed to solve the problem.
+- 然而，单源的算法也并不能保证 Visited Set 的顺序唯一对应一个 Tree
+
 # 头脑风暴
 1. In a previous lesson, we briefly discussed the union operation, described as follows: "Consider two MinHeaps of sizes m and n as our input. Output one MinHeap of combined size (m+n) containing all data from both heaps." 
    - What is the worst case time complexity of this operation?
@@ -477,5 +484,3 @@ O(|V| + |E|)的理解：对于 DFS 和 BFS来说，本质上都是对于每一�
 
    What is the space complexity of recursive DFS when in the same scenario as above?
    > $O(d)$
-
-6. 
