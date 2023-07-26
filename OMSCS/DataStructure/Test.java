@@ -1,7 +1,9 @@
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.LinkedList;
 
 public class Test {
@@ -41,13 +43,16 @@ public class Test {
         // right = right.getRight();
         // right.setLeft(new TreeNode<Integer>(110));
 
-        String text = "COMPUTERSCIENCE";
-        String pattern = "NCE";
-        // Map<Character, Integer> lastTable = PatternMatching.buildLastTable(pattern);
-        CharacterComparator myComparator = new CharacterComparator();
-        List<Integer> myList = PatternMatching.boyerMoore(pattern, text, myComparator);
-        for (Integer item:myList) {
-            System.out.println(item);
-        }
+        // String text = "COMPUTERSCIENCE";
+        // String pattern = "NCE";
+        // // Map<Character, Integer> lastTable = PatternMatching.buildLastTable(pattern);
+        // CharacterComparator myComparator = new CharacterComparator();
+        // List<Integer> myList = PatternMatching.boyerMoore(pattern, text, myComparator);
+        // for (Integer item:myList) {
+        //     System.out.println(item);
+        // }
+
+        Set<Edge<Integer>> MST = new HashSet<>();
+        System.out.println(MST.isEmpty());
     }
 }

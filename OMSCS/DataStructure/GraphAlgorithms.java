@@ -162,10 +162,7 @@ public class GraphAlgorithms {
         while (visiteSet.size() != numVertices && !candidateQueue.isEmpty()) {
             Edge<T> edge = candidateQueue.remove();
             Vertex<T> endVertex = edge.getV();
-            if (visiteSet.contains(endVertex)) { // cycle check
-                continue;
-            }
-            else {
+            if (!visiteSet.contains(endVertex)) { // cycle check
                 Edge<T> revEdge = new Edge<>(edge.getV(), edge.getU(), edge.getWeight());
                 MST.add(edge);
                 MST.add(revEdge);
@@ -173,7 +170,7 @@ public class GraphAlgorithms {
                 addToPQ(adjListMap, endVertex, candidateQueue, visiteSet);
             }
         }
-        return MST.isEmpty()? null:MST;
+        return visiteSet.size()!=numVertices? null : MST;
     }
     private static <T> void addToPQ(Map<Vertex<T>, List<VertexDistance<T>>> adjListMap, Vertex<T> startVert, PriorityQueue<Edge<T>> PQ, List<Vertex<T>> visiteSet) {
         List<VertexDistance<T>> adjList = adjListMap.get(startVert);

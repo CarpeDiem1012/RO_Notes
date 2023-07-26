@@ -60,7 +60,12 @@
 - [Minimum Spanning Tree (MST)](#minimum-spanning-tree-mst)
   - [Prim's Algo \<- cutting edge property](#prims-algo---cutting-edge-property)
   - [Kruskal's Algo \<- cycle property](#kruskals-algo---cycle-property)
-- [Why Kruskal uses Disjoint Sets rather than Visited Set?](#why-kruskal-uses-disjoint-sets-rather-than-visited-set)
+  - [Why Kruskal uses Disjoint Sets rather than Visited Set?](#why-kruskal-uses-disjoint-sets-rather-than-visited-set)
+- [Dynamic Programming (DP)](#dynamic-programming-dp)
+  - [Applicable situation](#applicable-situation)
+  - [P ?= NP 问题（七大千禧难题之一）](#p--np-问题七大千禧难题之一)
+  - [Bellman-Ford Algo](#bellman-ford-algo)
+  - [](#)
 - [头脑风暴](#头脑风暴)
 
 # Basis
@@ -441,6 +446,7 @@ O(|V| + |E|)的理解：对于 DFS 和 BFS来说，本质上都是对于每一�
 > MST 本身比较抽象，只需要记住和利用这两条性质。从原理上彻底理解比较困难，面对大多数判断题只需要找反例就好。
 ## Prim's Algo <- cutting edge property
   - 类似 Dijkstra，但是 en/de priority queue 的标准是 edge weight，优先小权重的
+  - 和 Dijkstra 一样同属于 Greedy Paradigm
   - Time Complexity 和 Dijkstra 相同: $O((|E|+|V|)log(|V|))$
 ## Kruskal's Algo <- cycle property
   - 先对于所有的 edge 做一个 buildHeap 放入 MinPQ (需要 $O(|E|)$)，然后从最小的开始 dequeue，当前 edge 会形成 cycle 的话就舍弃，否则纳入 MST 中
@@ -455,9 +461,70 @@ O(|V| + |E|)的理解：对于 DFS 和 BFS来说，本质上都是对于每一�
     - disjoint sets 的使用，借助了一种增长极端缓慢的函数 inverse Ackermann function，使得上述的 amortized cost 降至 O(1)
     - 对于一个 presorted edge list，不需要 heap，直接用 queue 可以实现 O(|E|)
 
-# Why Kruskal uses Disjoint Sets rather than Visited Set?
+## Why Kruskal uses Disjoint Sets rather than Visited Set?
 - The visited set worked in the DFS, BFS, Dijkstra's, and Prim's algorithms because they all built their solution outward from a single source. Kruskal's algorithm does not use a single source; it builds clusters globally across the graph, which is why a new solution is needed to solve the problem.
 - 然而，单源的算法也并不能保证 Visited Set 的顺序唯一对应一个 Tree
+
+# Dynamic Programming (DP)
+- break down the complex problem by solving overlapping, repeated subproblems
+- 类似 Divide and Conquer，KMP 和 Dijkstra 也是一种 DP 思想（可见DP 和 贪心算法并不矛盾）
+## Applicable situation
+- overlapping subproblem：依赖关系的底层存在很多 subproblems 的重复调用 -> 使用 memorization 来存储 subproblems 的解，以便后续直接查找，不必重复计算
+- optimal substructure：寻求这样一种结构，使得我们假若计算得到了 subproblem 的最优解，那么可以在此基础上较为方便地得到 complex problem 的最优解
+- subproblem 之间的关系一定可以使用一个 **directed acyclic graph (DAG)** 来表示（充要条件）
+- Top-down DP：使用 recursion，从 array[i] 开始向前求解
+- Bottom-up DP：使用 iteration，从 array[0] 开始向后求解
+
+## P ?= NP 问题（七大千禧难题之一）
+- **Decision Problem**：yes or no problem，答案是 binary 的，很多看似数值性的问题都可以转化为 Decisoin Problem，例如 TSP
+- **归约（Reduction）**：$A \leq B$ 即 A can reduce to B，意味着解决 B 的方法可以用来解决 A，例如：找到 single-source 的 shortest path 是 A，那么找到所有 pair-wise 的 shortest path 就是 B
+- **P (Polynomial Time Problem)**
+  - 可以在多项式时间之内被解决（solved）的，满足这样的 decision problem 的集合，被称为 P
+  - Solve 指的是直接从无到有得到结果
+- **NP (Non-deterministic Polynomial Time Problem)**
+  - 假如答案是 YES，那么则可以在多项式时间之内被验证（verified）为 YES，满足这样的 decision problem 的集合，被称为 NP
+  - Verify 指的是在已知存在某个待验证的 proof（得到这个 proof 所花费的时间，不必在多项式时间之内），设计算法来读取信息并验证其完备性
+  - 显然有关系 $P \sube NP$
+
+- **NP-complete**
+  - 在 NP 之中存在特殊的集合 $B \in NP$，对于任意一个 $A \in NP$，都有 A 可以复杂化到 B，即 $A \leq B$，那么这类 B 就是 NP-complete 的
+  - 可以理解为 NP-complete 是 NP 中的 upper bound，假如证明了 $NP-complete \sube P$ 就等同于证明了 $NP \sube P$，即有 $N=NP$ 
+- **NP-hard**
+  - 然而 NP-complete 无法逃脱 NP 的限制，即必须是一个 Decision Problem
+  - 当一个问题满足 NP-complete 的基本条件（其复杂度复杂到，能解决这个问题的求解器足够通用，以至于可以解决所有 NP 问题），但该问题又不是 NP 时，就被称为一个 NP-hard 问题
+  - 例如，“给出 TSP 的解” 作为一个 non-Decision Problem 就是一个 NP-hard
+  - 意义：假如说一个 NP-complete/hard 问题找到了 polynomial time 的解，那么用这个 solver 便可以求解所有的 NP（当然也包括P）问题
+
+- **判断 NP-hard**
+  1. 找到一个NP-Complete问题，经过证明可以 reduce to 你的问题，这意味着你的方法可以解决这个 NP-Complete 问题，那很显然，这个解决方法也是 NP-Complete 的
+  2. 所有的NP问题都可以 reduce 到你的问题
+  
+  - 很显然，方法1简单多的，我们只要找到一个现成的 NP-Complete 问题就可以了，然而，这个世界上，总得有第一个 NP-Complete 问题才能够用这个方法，这第一个 NP-Complete 问题的证明，注定了只能用方法2，那就是要证明所有NP问题都可以reduced到这个问题上，而万幸的是这第一个NP-Complete问题在40年前被找到了，它就是著名的SAT问题——基本逻辑是，所有的 NP 问题都可以被编码成为一个 Boolean formula
+- **0-1背包问题（0-1 Knapsack Problem）和 伪多项式时间**
+  - 背包容量 $W$，商品个数n，商品重量 $c_n$，商品价值 $v_n$
+  - 无界（unbounded）背包问题都可以转化成 0-1 背包问题
+  - 通过构建一个 bottom-up DP 的递推表格 $S[w_{i},\ n] = max(S[w_i,\ n-1],\ S[w_i-c_{n-1}]+v_n)$
+  - 在数值意义上的 complexity 是 O(nW)，**然而 runtime complexity 实际上考虑的是 input size (用 bits 长度来衡量) 和时间**
+  - 对于很多问题，例如排序算法，树搜索，input size 恰好等于个数 n（每一个数都可以用 32-bit/64-bit 来表示）；然而对于背包问题中的 W，input size 转化成数值 W 时需要进行 logrithmic-exponential 的转换，W 的大小随着 input size 的增加并不是线性的，而是指数级增长，因此看似 O(nW) 的 polynomial 问题变成了 $O(n\cdot2^{N})$ 的 non-polynomial 问题
+  - 这种 “伪多项式时间” 造就的 NP-hard 也被称为 **weakly NP-hard**
+## Bellman-Ford Algo
+- 本质上是对于 Dijkstra 的一种 relaxation
+  - 第 k 轮迭代，求解的是这样一个问题的最优解 -> 从 source 出发，最多使用 k 条 edge 时，到达可以触及的所有 vertices 的 shortest path distance 分别是多少？
+  - 特别地，当 k=|V|-1 时，就是原问题的最优解
+- 有 backup 版本
+- 无 backup 版本
+- 实际上，并不需要对于上一轮 iteration 的 table 做备份，而是可以直接使用本轮的其他 vertices 结果更新
+  - 的确，这样造成的后果是，DP 状态表的结果和 edge 的更新顺序有关系，每一轮更新时，使用不同的更新顺序会得到不同的结果
+  - 但是，长远来看，在进行 |V|-1 轮的更新之后，最终的结果是相同的
+  - 本质上讲，有 backup 的版本是一种 worst-case 的情况，即假设每一次更新都是最保守的 subproblem optimality 的，因此无论选择怎样的更新顺序，状态表的结果都是确定的；而 best-case 的情况下，存在这样一种顺序，可以仅仅通过一轮更新就得到真正的 shortest path，其蕴藏在 edge 顺序的随机性之中；恰恰因为如此，我们才需要进行 |V|-1 轮迭代，确保即使每轮都是 worst-case 也可以得到收敛的最优解
+  - 换言之，无 backup 算法的结果之中，所有和有 backup 的版本结果不同的 iteration，都是“幸运地猜到了更好的更新顺序”，更早地逼近了最优解；而 |V|-1 是该算法收敛的 upper bound
+  - 实际运算中，有可能在 |V|-1 轮之前就已经得到了最优解：此时 DP状态表和上一轮的结果相同，借助这一点，可以 early-stopping
+- negative edge：
+  - 存在 negative cycle：无解
+  - 不存在 negative cycle：有解，Bellman-Ford 可以求解，Dijkstra 不行
+- negative cycle detection：
+
+##
 
 # 头脑风暴
 1. In a previous lesson, we briefly discussed the union operation, described as follows: "Consider two MinHeaps of sizes m and n as our input. Output one MinHeap of combined size (m+n) containing all data from both heaps." 
