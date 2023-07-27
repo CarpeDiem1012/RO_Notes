@@ -365,18 +365,30 @@ Actual concrete implementations of data handling for ADT are called Data Structu
   - Single Occurance
   - All Occurance
 ## Brute-force Search
+- 复杂度 O(mn)
 ## Boyer-Moore (BM) Algo
 - 预处理：使用 last occurance table，记录当前 char 在 pattern 中上一次出现的时候的 index
+- 原理：从末尾开始对齐，遇到不匹配，
 - 注意小于等于 for (int idStart=0; idStart <= n-m; )
+- 复杂度：O(m+mn)=O(mn)
 ### Scenarios
   - Bigger alphabet：尽量少出现 repetition，可以使得 last occurrence table 里的 occurrence 不被频繁刷新，进而实现最大程度上的跳跃
 ## Kruth-Morris-Pratt (KMP) Algo
 - 预处理：使用 failure table，记录和 pattern 中和 prefix 相匹配之处的 index
+- 复杂度：O(m+m+n)
 ### Scenarios
   - Streaming information：因为永远向前，而 BM 需要在每个 window 内部从后向前遍历
   - Smaller alphabet, More repetition：越多的重复项更有可能产生 prefix-suffix pairs，使得 failure table 内部拥有更多 non-zero element，否则 FT 失去了使用价值
   - 过多的 repetition 会使得 BM degenerate to Brute-force，而没有 repetition 会使得 KMP degenerate to Brute-force
 ## Rabin-Karp (RK) Algo
+- 原理：本质上就是一个 Brute force search，但是使用 Rabin Fingerprint rolling hash
+  - $Hash(p)=p_0*k^{0}+p_1*k^{1}+p_2*k^{2}+...$
+  - $Hash(next)=(Hash(previous)-p_{old}*k^{n})*k+p_{new}$
+- 复杂度：
+  - 计算初始的 Hash：O(m)
+  - Rolling Hash 更新：O(1)
+  - worst-case：经常需要比较，每次比较 O(m)
+  - best-case：只用比较一次，开销 O(m+n)
 ### Scenarios
  - 相比于 BM 和 KMP 来说，RK 对于 pattern 的结构没有特别的要求，虽然可能会有 computational overhead，但是表现比较均衡，good adaptability
 
@@ -391,6 +403,10 @@ Actual concrete implementations of data handling for ADT are called Data Structu
 - `Acyclic` & `Cyclic`
 - `Disconnected` & `Weakly Connected` & `Strongly Connected`
 - Tree = Acylic + Connected, using minimum edges to maintain connectedness |E|=|V|-1
+- Hamilton Cycle -> NP-complete
+- Euler Circuit -> P
+- Shortest Path -> P
+- Longest Path -> NP-hard
 
 ## 数据结构
 - Adjacent Matrix O(|V|^2) 适用于 dense gragh
@@ -399,9 +415,9 @@ Actual concrete implementations of data handling for ADT are called Data Structu
 
 ## Search
 ### Depth First Search
-- non-recursive：使用了 stack 结构，对于早遍历的 vertex 的
+- non-recursive：使用了 stack 结构，对于早遍历的 vertices 直接标记为访问，防止后续产生回环 cycle
 - recursive：本质上是使用 for 循环来代替了 stack 的作用，使得 parent recursion 的状态能够保留，在成功完成 child recursion 之后再回溯到最近的分叉节点
-> 注意这两种 implementation 下的 visiting order 是不一样的，前者先 visit 再 go deeper，后者先 go deeper 再 visit
+> 注意这两种 implementation 下的 visiting order 是不一样的，**前者先 visit neighbours，再 go deeper；后者先 visit current，再 go deeper，再 visit neighbors**
 ### Breadth First Search
 ### Time Complexity
 O(|V| + |E|)的理解：对于 DFS 和 BFS来说，本质上都是对于每一个 vertex 的 incident 进行 edge 搜索，逻辑不同而已。其中，对于每一个 vertex 进行的操作是
@@ -503,7 +519,7 @@ O(|V| + |E|)的理解：对于 DFS 和 BFS来说，本质上都是对于每一�
 - **0-1背包问题（0-1 Knapsack Problem）和 伪多项式时间**
   - 背包容量 $W$，商品个数n，商品重量 $c_n$，商品价值 $v_n$
   - 无界（unbounded）背包问题都可以转化成 0-1 背包问题
-  - 通过构建一个 bottom-up DP 的递推表格 $S[w_{i},\ n] = max(S[w_i,\ n-1],\ S[w_i-c_{n-1}]+v_n)$
+  - 通过构建一个 bottom-up DP 的递推表格 $S[w_{i},\ n] = max(S[w_i,\ n-1],\ S[w_i-c_{n-1},\ n-1]+v_n)$
   - 在数值意义上的 complexity 是 O(nW)，**然而 runtime complexity 实际上考虑的是 input size (用 bits 长度来衡量) 和时间**
   - 对于很多问题，例如排序算法，树搜索，input size 恰好等于个数 n（每一个数都可以用 32-bit/64-bit 来表示）；然而对于背包问题中的 W，input size 转化成数值 W 时需要进行 logrithmic-exponential 的转换，W 的大小随着 input size 的增加并不是线性的，而是指数级增长，因此看似 O(nW) 的 polynomial 问题变成了 $O(n\cdot2^{N})$ 的 non-polynomial 问题
   - 这种 “伪多项式时间” 造就的 NP-hard 也被称为 **weakly NP-hard**
@@ -523,6 +539,8 @@ O(|V| + |E|)的理解：对于 DFS 和 BFS来说，本质上都是对于每一�
   - 存在 negative cycle：无解
   - 不存在 negative cycle：有解，Bellman-Ford 可以求解，Dijkstra 不行
 - negative cycle detection：
+
+
 
 ##
 

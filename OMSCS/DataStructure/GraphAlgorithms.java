@@ -151,37 +151,71 @@ public class GraphAlgorithms {
      */
     public static <T> Set<Edge<T>> prims(Vertex<T> start, Graph<T> graph) {
         // WRITE YOUR CODE HERE (DO NOT MODIFY METHOD HEADER)!
-        List<Vertex<T>> visiteSet = new ArrayList<>();
+        Set<Vertex<T>> visitedSet = new HashSet<>();
         Set<Edge<T>> MST = new HashSet<>();
         PriorityQueue<Edge<T>> candidateQueue = new PriorityQueue<>();
         Map<Vertex<T>, List<VertexDistance<T>>> adjListMap = graph.getAdjList();
         int numVertices = graph.getVertices().size();
 
-        visiteSet.add(start);
-        addToPQ(adjListMap, start, candidateQueue, visiteSet);
-        while (visiteSet.size() != numVertices && !candidateQueue.isEmpty()) {
+        visitedSet.add(start);
+        addToEdgePQ(adjListMap, start, candidateQueue, visitedSet);
+        while (visitedSet.size() != numVertices && !candidateQueue.isEmpty()) {
             Edge<T> edge = candidateQueue.remove();
             Vertex<T> endVertex = edge.getV();
-            if (!visiteSet.contains(endVertex)) { // cycle check
+            if (!visitedSet.contains(endVertex)) { // cycle check
                 Edge<T> revEdge = new Edge<>(edge.getV(), edge.getU(), edge.getWeight());
                 MST.add(edge);
                 MST.add(revEdge);
-                visiteSet.add(endVertex);
-                addToPQ(adjListMap, endVertex, candidateQueue, visiteSet);
+                visitedSet.add(endVertex);
+                addToEdgePQ(adjListMap, endVertex, candidateQueue, visitedSet);
             }
         }
-        return visiteSet.size()!=numVertices? null : MST;
+        return visitedSet.size()!=numVertices? null : MST;
     }
-    private static <T> void addToPQ(Map<Vertex<T>, List<VertexDistance<T>>> adjListMap, Vertex<T> startVert, PriorityQueue<Edge<T>> PQ, List<Vertex<T>> visiteSet) {
+    private static <T> void addToEdgePQ(Map<Vertex<T>, List<VertexDistance<T>>> adjListMap, Vertex<T> startVert, PriorityQueue<Edge<T>> PQ, Set<Vertex<T>> visitedSet) {
         List<VertexDistance<T>> adjList = adjListMap.get(startVert);
         for (VertexDistance<T> vertDistPair : adjList) {
             Vertex<T> endVert = vertDistPair.getVertex();
             int dist = vertDistPair.getDistance();
-            if (!visiteSet.contains(endVert)) {
+            if (!visitedSet.contains(endVert)) {
                 Edge<T> edge = new Edge<>(startVert, endVert, dist);
                 PQ.add(edge);
             }
         }
     }
 
+    /*
+     * Dijkstra
+     */
+    public static <T> Set<Vertex<T>> dijkstra(Vertex<T> start, Graph<T> graph) {
+        // WRITE YOUR CODE HERE (DO NOT MODIFY METHOD HEADER)!
+        Set<Vertex<T>> visitedSet = new HashSet<>();
+        PriorityQueue<VertexDistance<T>> candidateQueue = new PriorityQueue<>();
+        Map<Vertex<T>, List<VertexDistance<T>>> adjListMap = graph.getAdjList();
+        int numVertices = graph.getVertices().size();
+        VertexDistance<T> startVertDistPair = new VertexDistance<>(start, 0);
+
+        visitedSet.add(start);
+        addToVertexPQ(adjListMap, startVertDistPair, candidateQueue, visitedSet);
+        while (visitedSet.size() != numVertices && !candidateQueue.isEmpty()) {
+            VertexDistance<T> vertDistPair = candidateQueue.remove();
+            Vertex<T> vertex = vertDistPair.getVertex();
+            if (!visitedSet.contains(vertex)) { // cycle check
+                visitedSet.add(vertex);
+                addToVertexPQ(adjListMap, vertDistPair, candidateQueue, visitedSet);
+            }
+        }
+        return visitedSet.size()!=numVertices? null : visitedSet;
+    }
+    private static <T> void addToVertexPQ(Map<Vertex<T>, List<VertexDistance<T>>> adjListMap, VertexDistance<T> startVertDistPair, PriorityQueue<VertexDistance<T>> PQ, Set<Vertex<T>> visitedSet) {
+        List<VertexDistance<T>> adjList = adjListMap.get(startVertDistPair.getVertex());
+        for (VertexDistance<T> vertDistPair : adjList) {
+            Vertex<T> endVert = vertDistPair.getVertex();
+            int dist = vertDistPair.getDistance();
+            if (!visitedSet.contains(endVert)) {
+                VertexDistance<T> newPair = new VertexDistance<>(endVert, dist + startVertDistPair.getDistance());
+                PQ.add(newPair);
+            }
+        }
+    }
 }
