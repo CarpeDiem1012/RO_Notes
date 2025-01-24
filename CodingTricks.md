@@ -20,7 +20,6 @@ ___
 - **`CTRL + Up/Down`**: 上下滚动视图
 - **`CTRL + Shift + [`**: 代码块折叠
 - **`CTRL + Shift + ]`**: 代码块打开
-<!--stackedit_data:
-eyJoaXN0b3J5IjpbLTEzMjczOTIxNzksLTIxMzMxMTM3NDVdfQ
-==
--->
+___
+
+> Based on (Lunar/Neo)Vi/Vim editor.

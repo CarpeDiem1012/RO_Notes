@@ -1,13 +1,24 @@
 > In case of any detailed questions and puzzles, please refer to this structured and encyclopedic [guidance](https://git-scm.com/book/en/v2 "Git Pro Web"), with **patience** and **concentration** :)
 
+> A concise and handy [cheetsheet](https://ndpsoftware.com/git-cheatsheet.html#loc=remote_repo;) for Git.
+
+#### @ Git 常用起手
+- `git init`
+- `git remote add <remote-name>(always using origin) <remote-url>`
+- `git clone`
+
 #### @ Git 的 3 种工作空间
 
 本地的 Git 始终在三个区域之间工作
 - 本地当前版本库（*branch）
 - 当前工作区（HEAD）
 - 当前暂存区（stage）
-> 在 git restore --help 中使用如下称呼，修改历史（source），当前工作区（working tree = HEAD），当前暂存区（index = stage）
-
+> 在 git restore --help 中，使用如下术语
+> - source：修改历史
+> - working tree（= HEAD）：当前工作区
+> - index（= stage）：当前暂存区
+> - tree：某个directory
+> - blob：某个file
 
 #### @ Git 的 4 类文件状态
 
@@ -68,7 +79,7 @@ git reflog // 历史日志查询（用于版本回退后，找回“未来”的
 		- HEAD => latest branch
 
 	```shell
-	git restore <file>
+	git restore [--worktree](by default) <file>
 	或
 	git checkout -- <file>
 	```
@@ -76,15 +87,15 @@ git reflog // 历史日志查询（用于版本回退后，找回“未来”的
 2. 暂存区（stage）内 `git add` 了错误的文件，想要从 stage 中移除，且不删除（HEAD）中的文件 (解释请参考[后文](#git-reset-default)) 
 
 	  ```shell
-	  git restore --staged <file>
+	  git restore --staged[-S] <file> 
 	  或
 	  git reset HEAD <file>
 	```
 
 3. 不仅 `git add` 了错误的文件进入 stage ，而且已经 `git commit` 到本地版本库了，便需要使用版本回退
 
-	```shell
-	git restore -s <commit_id><file>
+	```git
+	git restore --source[-s] <commit_id><file>
 	或
 	git reset --hard <commit_id> 
 	```
@@ -259,13 +270,3 @@ git reflog // 历史日志查询（用于版本回退后，找回“未来”的
 	
 	git revert HEAD // 抵消上一次提交
 	```
-	
-<!--stackedit_data:
-eyJoaXN0b3J5IjpbMTAyNzkzNDY0NCwtMjEzNzUyMzQzLDEzMD
-E0MTAyNTcsLTMwNzI1MjkwOSwtMTIyNTU1ODgwMiwtMTg0NTg0
-NTUyOSwtMTMxMjc3OTAxMSwtMTgwNDg3NDA0MywtMTI1MDI2NT
-U5MiwtMjQ4NzA2NDE1LDUzNTU4MTg0MiwtMTM0NTQ0MTE3Niwx
-MjkyMTQxMTI5LC00NzMwNjMwODksOTg3NDc0ODE0LC0xMTM1MD
-gzNzE3LC0xNjM4Nzg5NDUyLDIwMzE0OTE2NTMsMTkwMDA5OTA0
-NCwtMzgyNTA0NjE1XX0=
--->

@@ -27,6 +27,7 @@ public class ArrayList<T> {
     public ArrayList() {
         //DO NOT MODIFY THIS METHOD!
         backingArray = (T[]) new Object[INITIAL_CAPACITY];
+        backingArray.hashCode();
     }
 
     // @ Override

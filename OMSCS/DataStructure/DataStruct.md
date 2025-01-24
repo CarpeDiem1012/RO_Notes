@@ -1,3 +1,5 @@
+<link rel="stylesheet" type="text/css" href="auto-number-title.css" />
+
 - [Basis](#basis)
   - [Iterable and Iterator](#iterable-and-iterator)
     - [Iterator\<T\>](#iteratort)
@@ -70,6 +72,7 @@
 
 # Basis
 ## Iterable and Iterator
+
 ### Iterator\<T>
 - 需要补足以下方法
 ```java
@@ -145,9 +148,9 @@ $$
 
 ### Average Time Complexity
 > When working with probability, you should always be asking yourself "What is the randomness being used?"
-- 求一类算法在某种条件下的 Probablitic Expectation of Cost $E(Cost)$
+- 求一类算法在某种条件下的 Probabilistic Expectation of Cost $E(Cost)$
 - 只要涉及到概率问题，首先应该关注但却常常被人们忽视的问题是：这种随机性是体现在哪一个层面上的？选取不同的随机性对象会产生完全不同的模型和结果！
-- 对于 Bianray Search Tree 搜索的 $O(log(n))$ 复杂度，随机性体现在于一个 sequence 的排列组合中，每一种 permutation 唯一对应一个 sequence，当我们按照 BST 的规则将其填入，就会得到一个唯一的 tree。于是平均复杂度就是 Weighing the performance of **A SINGLE OPERATION** over all possible configurations of a tree.
+- 对于 Binary Search Tree 搜索的 $O(log(n))$ 复杂度，随机性体现在于一个 sequence 的排列组合中，每一种 permutation 唯一对应一个 sequence，当我们按照 BST 的规则将其填入，就会得到一个唯一的 tree。于是平均复杂度就是 Weighing the performance of **A SINGLE OPERATION** over all possible configurations of a tree.
 
 # Abstract Data Type (ADT)
 Think of an ADT as being analogous to Java's interfaces in that they set the framework for what operations (methods) are available as well as what these operations do, but they leave the actual implementation details abstract.
@@ -395,13 +398,13 @@ Actual concrete implementations of data handling for ADT are called Data Structu
 # Graph Theory
 ## Graph
 - Vertex (`V`) & Edge (`E`) & Order (`||`)
-- `Path` & `Trail` & `Walk`
-- `Cycle` & `Circuit`
+- `Path`(V和E都不重复) & `Trail`(V可重复E不重复) & `Walk`(V和E都可重复)
+- `Cycle`(Closed Path) & `Circuit`(Closed Trail)
 - `Directed` & `Undirected`
 - `Self-loop` & `Parallel Edges`
 - `Simple Graph` & `Multigraph`
 - `Acyclic` & `Cyclic`
-- `Disconnected` & `Weakly Connected` & `Strongly Connected`
+- `Disconnected` & `Weakly Connected`(方向无关) & `Strongly Connected`(方向有关)
 - Tree = Acylic + Connected, using minimum edges to maintain connectedness |E|=|V|-1
 - Hamilton Cycle -> NP-complete
 - Euler Circuit -> P
@@ -410,7 +413,7 @@ Actual concrete implementations of data handling for ADT are called Data Structu
 
 ## 数据结构
 - Adjacent Matrix O(|V|^2) 适用于 dense gragh
-- Adjacent List O(|V|) 适用于 sparse graph
+- Adjacent List O(|V|^2) 适用于 sparse graph
 - Edge List (不显式地储存 vertices 信息) O(|E|)
 
 ## Search
@@ -428,7 +431,7 @@ O(|V| + |E|)的理解：对于 DFS 和 BFS来说，本质上都是对于每一�
 
 ### Dijkstra Algo
 - 形象记忆：大水漫灌迷宫，使用等距离线来确定最优
-- 核心 Assumption：贪心算法思想，到达当前 vertext 的最短距离 = min{到达某个相邻节点的最短距离 + 这段 edge 的长度 for 所有相邻节点}，保证当前最优，但无法保证全局最优，直到遍历之前
+- 核心 Assumption：与 DFS（利用 Queue 进行 level-wise 的搜索）相似，但使用了 PriorityQueue 进行了 Distance-wise 的搜索。同时使用了贪心算法，到达当前 vertext 的最短距离 = min{到达某个相邻节点的最短距离 + 这段 edge 的长度 for 所有相邻节点}，保证当前最优，但无法保证全局最优，直到遍历结束实现全局最优
 - 数据结构：
   - Visited Set: HashSet/HashMap
   - Distance Map: HashSet/HashMap
@@ -439,7 +442,7 @@ O(|V| + |E|)的理解：对于 DFS 和 BFS来说，本质上都是对于每一�
     - 因此 total time complexity = $O(|E|log(|E|))$
   - 优化版本（改用存在容纳上限的 min-priority queue）：
     - 其实本质上只需要 dequeue 所有 reachable vertices 数量的次数就可以实现，并不真的需要 O(|E|) 次，但由于 PQ 中存在的 (vertex, distance) pair 并不一定是 optimal 的（Visited Set 中存在的才是 optimal 的），导致维护一个大小为 O(|E|) 的 PQ 会出现同一个 vertex 对应多个 distance 的情况，因此简单版本中认为需要 dequeue O(|E|) 次
-    - 现在有一种优化操作，使得每一次 enqueue 的时候，相比于之前的增添一个重复的 vertex，现在可以直接更新那个 vertex 的距离使其为历史最小值，完全去除了冗余，那么 PQ 就不必保持 O(|E|) 的大小了 (并且借助 HashMap 作为 backingArray，可以实现 O(1) 的 search，因此 updating 是一个 O(log n) )
+    - 现在有一种优化操作，使得每一次 enqueue 的时候，相比于之前的增添一个重复的 vertex，现在可以直接更新那个 vertex 的距离使其为历史最小值，完全去除了冗余，那么 PQ 就不必保持 O(|E|) 的大小了 (并且借助 HashMap 作为 Heap 的 backingArray，可以实现 O(1) 的 search，因此 updating 是一个 O(log n) )
     - 对于 starting vertex 来说，把 reachable vertices（即之间存在 trail）的数量记作 k，因此只要把 k 个 vertices 加入 Visited Set 就可以结束算法。那么使用一个容量上限为 k 的 min-QP 就可以实现目的。弹出/新增/刷新 min-PQ (binary heap) 都是 O(log(k))，但是弹出需要 O(k) 次，而新增/刷新需要 O(|E|) 次（因为依然要考虑目标 vertex 的每一条 edge）
     - 又有 k=O(|V|), 因此 total time complexity = $O((|V|+|E|) \cdot log|V|)$
     - 对于 connected graph，存在 |E| >= |V| - 1，因此简化为 $O(|E| \cdot log|V|)$
